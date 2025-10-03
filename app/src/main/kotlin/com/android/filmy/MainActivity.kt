@@ -1,5 +1,6 @@
 package com.android.filmy
 
+import com.android.filmy.FilmyApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,8 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.filmy.home.HomeScreen
 import com.android.filmy.ui.theme.FilmyAndroidMVITheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,8 +24,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FilmyAndroidMVITheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    HomeScreen(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
