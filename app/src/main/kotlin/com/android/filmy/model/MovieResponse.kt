@@ -1,5 +1,6 @@
 package com.android.filmy.model
 
+import com.android.filmy.BuildConfig
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -30,4 +31,7 @@ data class Movie(
 ) {
     val displayTitle: String
         get() = title ?: originalTitle ?: "Untitled"
+
+    val posterUrl : String
+        get() = "${BuildConfig.BASE_IMAGE_URL}${posterPath}"
 }

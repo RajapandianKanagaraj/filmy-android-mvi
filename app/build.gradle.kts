@@ -20,24 +20,17 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val tmdbApiKey: String = gradleLocalProperties(
-            rootDir,
-            providers = providers
-        ).getProperty("TMDB_API_KEY")
-
-        val baseUrl = gradleLocalProperties(
-            rootDir,
-            providers
-        ).getProperty("BASE_URL")
-
-        val imageBaseUrl = gradleLocalProperties(
-            rootDir,
-            providers = providers
-        ).getProperty("BASE_IMAGE_URL")
+        val tmdbApiKey: String = getLocalProperty("TMDB_API_KEY")
+        val baseUrl = getLocalProperty("BASE_URL")
+        val imageBaseUrl = getLocalProperty("BASE_IMAGE_URL")
+        val amplitudeApiKey = getLocalProperty("AMPLITUDE_API_KEY")
+        val segmentWriteKey = getLocalProperty("SEGMENT_WRITE_KEY")
 
         buildConfigField("String", "TMDB_API_KEY", tmdbApiKey)
         buildConfigField("String", name = "BASE_URL", value = baseUrl)
         buildConfigField("String", name = "BASE_IMAGE_URL", value = imageBaseUrl)
+        buildConfigField("String", name = "AMPLITUDE_API_KEY", value = amplitudeApiKey)
+        buildConfigField("String", name = "SEGMENT_WRITE_KEY", value = segmentWriteKey)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -61,6 +54,13 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+private fun getLocalProperty(key: String): String {
+    return gradleLocalProperties(
+        rootDir,
+        providers = providers
+    ).getProperty(key)
 }
 
 dependencies {
@@ -87,7 +87,16 @@ dependencies {
     ksp(libs.moshi.codegen)
 
     //Coil
-//    implementation(libs.coil)
+    implementation(libs.coil)
+    implementation(libs.coil.network)
+
+    // Amplitude Analytics + Session Replay
+    implementation(libs.amplitude)
+    implementation(libs.amplitude.session.replay)
+
+
+    //Segment Analytics
+    implementation("com.segment.analytics.kotlin:android:1.21.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
