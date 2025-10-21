@@ -12,11 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.android.filmy.model.Movie
+import com.android.filmy.mvi.ActionDispatcher
+import com.android.filmy.mvi.NavAction
 
 @Composable
 fun Carousel(
     title: String,
     items: List<Movie>,
+    actionDispatcher: ActionDispatcher,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -37,11 +40,10 @@ fun Carousel(
                     title = movie.displayTitle,
                     posterUrl = movie.posterUrl,
                     onClick = {
-                        // Handle movie click
+                        actionDispatcher.dispatch(NavAction.navigateToMovieDetails(movie.id))
                     }
                 )
             }
         }
     }
-
 }

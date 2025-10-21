@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -72,6 +73,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.material.icons.extended)
 
     // Dagger - Hilt
     implementation(libs.hilt.android)
@@ -90,10 +92,13 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.network)
 
+    //Navigation
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+
     // Amplitude Analytics + Session Replay
     implementation(libs.amplitude)
     implementation(libs.amplitude.session.replay)
-
 
     //Segment Analytics
     implementation("com.segment.analytics.kotlin:android:1.21.0")

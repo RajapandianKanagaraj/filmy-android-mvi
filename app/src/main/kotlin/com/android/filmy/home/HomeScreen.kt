@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.ui.components.Carousel
 import com.android.filmy.ui.components.MovieCard
 
@@ -26,12 +27,21 @@ fun HomeScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
+    val actionDispatcher = LocalActionDispatcher.current
 
     LazyColumn(modifier = modifier) {
         item {
-            Carousel( title = "Popular Movies", items = state.movies)
+            Carousel(
+                title = "Popular Movies",
+                actionDispatcher = actionDispatcher,
+                items = state.movies
+            )
 
-            Carousel( title = "Trending Movies", items = state.movies)
+            Carousel(
+                title = "Trending Movies",
+                actionDispatcher = actionDispatcher,
+                items = state.movies,
+            )
 
 //            LazyVerticalGrid(modifier = Modifier, columns = GridCells.Fixed(2)) {
 //                items(state.movies, key = { it.id }) { movie ->
