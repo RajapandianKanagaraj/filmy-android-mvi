@@ -2,6 +2,9 @@ package com.android.filmy.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.filmy.core.MovieContentSegment
+import com.android.filmy.core.SegmentRepository
+import com.android.filmy.core.SegmentState
 import com.android.filmy.data.MovieRepository
 import com.android.filmy.mvi.HomeAction
 import com.android.filmy.mvi.HomeState
@@ -15,9 +18,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(val movieRepository: MovieRepository): ViewModel() {
-    private val _state = MutableStateFlow(HomeState())
-    val state: StateFlow<HomeState> = _state.asStateFlow()
+class HomeViewModel @Inject constructor(val segmentRepository: SegmentRepository): ViewModel() {
+    val state: StateFlow<List<SegmentState>> = segmentRepository.segmentState
     private val actions = MutableSharedFlow<HomeAction>()
 
     init {
@@ -27,29 +29,13 @@ class HomeViewModel @Inject constructor(val movieRepository: MovieRepository): V
     }
 
     private suspend fun fetchNowPlayingMovies() {
-        _state.update {
-            it.copy(
-                isLoading = true,
-                error = null,
+        segmentRepository.getContentSegments(
+            listOf(
+                MovieContentSegment.NowPlayingMovies,
+                MovieContentSegment.TrendingMovies,
+                MovieContentSegment.UpcomingMovies,
+                MovieContentSegment.PopularMovies,
             )
-        }
-
-        try {
-            val movies = movieRepository.getNowPlayingMovies()
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    movies = movies,
-                )
-            }
-        } catch (e: Exception) {
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    error = e.message,
-                )
-            }
-        }
+        )
     }
-
 }
