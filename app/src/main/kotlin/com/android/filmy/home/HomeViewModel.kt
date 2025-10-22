@@ -2,6 +2,7 @@ package com.android.filmy.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.filmy.analytics.DatadogTracker
 import com.android.filmy.core.MovieContentSegment
 import com.android.filmy.core.SegmentRepository
 import com.android.filmy.core.SegmentState
@@ -18,7 +19,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(val segmentRepository: SegmentRepository): ViewModel() {
+class HomeViewModel @Inject constructor(
+    val segmentRepository: SegmentRepository,
+    val datadogTracker: DatadogTracker,
+) : ViewModel() {
     val state: StateFlow<List<SegmentState>> = segmentRepository.segmentState
     private val actions = MutableSharedFlow<HomeAction>()
 

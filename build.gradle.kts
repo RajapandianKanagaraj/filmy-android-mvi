@@ -7,3 +7,14 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlinx.serialization) apply false
 }
+
+// Top-level build file
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.datadoghq:dd-sdk-android-gradle-plugin:1.14.0")
+    }
+}

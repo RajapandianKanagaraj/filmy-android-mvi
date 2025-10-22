@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
+apply(plugin = "com.datadoghq.dd-sdk-android-gradle-plugin")
+
 android {
     namespace = "com.android.filmy"
     compileSdk = 36
@@ -26,12 +28,16 @@ android {
         val imageBaseUrl = getLocalProperty("BASE_IMAGE_URL")
         val amplitudeApiKey = getLocalProperty("AMPLITUDE_API_KEY")
         val segmentWriteKey = getLocalProperty("SEGMENT_WRITE_KEY")
+        val datadogClientToken = getLocalProperty("DATADOG_CLIENT_TOKEN")
+        val datadogRumApplicationId = getLocalProperty("DATADOG_RUM_APP_ID")
 
         buildConfigField("String", "TMDB_API_KEY", tmdbApiKey)
         buildConfigField("String", name = "BASE_URL", value = baseUrl)
         buildConfigField("String", name = "BASE_IMAGE_URL", value = imageBaseUrl)
         buildConfigField("String", name = "AMPLITUDE_API_KEY", value = amplitudeApiKey)
         buildConfigField("String", name = "SEGMENT_WRITE_KEY", value = segmentWriteKey)
+        buildConfigField("String", name = "DATADOG_CLIENT_TOKEN", value = datadogClientToken)
+        buildConfigField("String", name = "DATADOG_RUM_APP_ID", value = datadogRumApplicationId)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -101,7 +107,13 @@ dependencies {
     implementation(libs.amplitude.session.replay)
 
     //Segment Analytics
-    implementation("com.segment.analytics.kotlin:android:1.21.0")
+    implementation(libs.segment)
+
+    // DataDog Rum
+    implementation(libs.datadog.core)
+    implementation(libs.datadog.rum)
+    implementation(libs.datadog.okhttp)
+    implementation(libs.datadog.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

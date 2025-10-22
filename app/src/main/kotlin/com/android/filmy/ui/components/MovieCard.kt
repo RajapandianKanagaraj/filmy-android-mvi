@@ -9,6 +9,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
@@ -18,14 +19,32 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.android.filmy.mvi.LocalActionDispatcher
+import com.android.filmy.mvi.UiAction
 
 @Composable
 fun MovieCard(
     modifier: Modifier = Modifier,
+    id: Int,
     title: String,
     posterUrl: String,
+    ancestorId: String? = null,
     onClick: () -> Unit
 ) {
+    val actionDispatcher = LocalActionDispatcher.current
+    LaunchedEffect(Unit) {
+        actionDispatcher.dispatch(
+            UiAction.ViewAppeared(
+                "movie_card_$id",
+                mutableMapOf(
+                    "ancestorId" to ancestorId.orEmpty(),
+                    "movie_id" to id,
+                    "movie_title" to title,
+                    "poster_url" to posterUrl,
+                )
+            )
+        )
+    }
     Card(
         onClick = onClick,
         modifier = modifier

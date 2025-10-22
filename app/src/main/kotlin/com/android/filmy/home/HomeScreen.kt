@@ -8,12 +8,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.android.filmy.analytics.InitRumView
+import com.android.filmy.analytics.TrackingEvent
 import com.android.filmy.core.Segment.MovieSegment
 import com.android.filmy.core.SegmentState
 import com.android.filmy.mvi.ActionDispatcher
@@ -25,27 +28,24 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val datadogTracker = viewModel.datadogTracker
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val actionDispatcher = LocalActionDispatcher.current
+
+    InitRumView(
+        viewKey = "HomeScreen",
+        viewName = "Home",
+        attributes = mapOf("screen_name" to "Home")
+    )
+    LaunchedEffect(Unit) {
+        datadogTracker.trackPageEvent(TrackingEvent.SCREEN_VIEWED, mapOf("screen_name" to "Home"))
+    }
 
     LazyColumn(modifier = modifier) {
         items(state) { segment ->
             RenderState(segment, actionDispatcher)
         }
-
-//        item {
-//            Carousel(
-//                title = "Popular Movies",
-//                actionDispatcher = actionDispatcher,
-//                items = state.movies
-//            )
-//
-//            Carousel(
-//                title = "Trending Movies",
-//                actionDispatcher = actionDispatcher,
-//                items = state.movies,
-//            )
 
 //            LazyVerticalGrid(modifier = Modifier, columns = GridCells.Fixed(2)) {
 //                items(state.movies, key = { it.id }) { movie ->
@@ -88,6 +88,7 @@ fun RenderSegment(
     actionDispatcher: ActionDispatcher,
 ) {
     Carousel(
+        id = segment.id,
         title = segment.title,
         actionDispatcher = actionDispatcher,
         items = segment.movies,
@@ -102,7 +103,6 @@ fun SegmentLoading() {
             .height(160.dp)
             .padding(8.dp)
     ) {
-
         Text("Loading...")
     }
 }

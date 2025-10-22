@@ -3,6 +3,7 @@ package com.android.filmy.di
 import android.os.Build
 import com.android.filmy.BuildConfig
 import com.android.filmy.network.MovieApi
+import com.datadog.android.okhttp.DatadogInterceptor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module

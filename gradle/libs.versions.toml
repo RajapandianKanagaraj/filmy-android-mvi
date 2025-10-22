@@ -16,9 +16,10 @@ moshi = "1.15.2"
 coil = "3.3.0"
 amplitude = "1.22.3"
 amplitudeSessionReplay = "0.20.15"
-segment = "1.21.0"
+segment = "1.22.0"
 nav_version = "2.9.5"
 kotlinx-serialization = "1.9.0"
+datadog = "3.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,6 +64,12 @@ amplitude-session-replay = { group = "com.amplitude", name = "plugin-session-rep
 # Segment
 segment = { module = "com.segment.analytics.kotlin:android", version.ref = "segment"}
 
+# DataDog Rum
+datadog-core = { group = "com.datadoghq", name = "dd-sdk-android-core", version.ref = "datadog" }
+datadog-rum = { group = "com.datadoghq", name = "dd-sdk-android-rum", version.ref = "datadog"}
+datadog-okhttp = { group = "com.datadoghq", name = "dd-sdk-android-okhttp", version.ref = "datadog"}
+datadog-compose = { group = "com.datadoghq", name = "dd-sdk-android-compose", version.ref = "datadog"}
+
 # Navigation
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav_version"}
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization"}
@@ -74,4 +81,5 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
+#datadog = { id = "com.datadoghq.dd-sdk-android-gradle-plugin", version.ref = "datadog" }
 

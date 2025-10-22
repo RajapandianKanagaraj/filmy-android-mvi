@@ -19,6 +19,8 @@ import com.android.filmy.ui.AppTopBar
 import com.android.filmy.ui.BottomNavBar
 import com.android.filmy.ui.NavIconType
 import com.android.filmy.ui.theme.FilmyAndroidMVITheme
+import com.datadog.android.compose.NavigationViewTrackingEffect
+import com.datadog.android.rum.GlobalRumMonitor
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -30,10 +32,22 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        GlobalRumMonitor.get().startView(
+            key = this,
+            name = "MainActivity",
+            attributes = emptyMap()
+        )
+
         setContent {
             FilmyAndroidMVITheme {
                 val navController = rememberNavController()
                 actionDispatcher.initialize(navController)
+
+//                NavigationViewTrackingEffect(
+//                    navController = navController,
+//                    trackArguments = true,
+//                )
 
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
@@ -62,6 +76,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        GlobalRumMonitor.get().stopView(this)
     }
 }
 
