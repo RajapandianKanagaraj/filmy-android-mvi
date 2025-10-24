@@ -17,8 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.filmy.analytics.InitRumView
 import com.android.filmy.analytics.TrackingEvent
-import com.android.filmy.core.SegmentData.MovieSegmentData
-import com.android.filmy.core.SegmentState
+import com.android.filmy.core.SegmentLCEState
+import com.android.filmy.model.CollectionDataModel
+import com.android.filmy.model.MovieDataModel
+import com.android.filmy.model.SegmentDataModel
 import com.android.filmy.mvi.ActionDispatcher
 import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.ui.components.Carousel
@@ -67,7 +69,7 @@ fun HomeScreen(
 
 @Composable
 fun RenderState(
-    segmentState: SegmentState,
+    segmentState: SegmentLCEState,
     actionDispatcher: ActionDispatcher,
 ) {
     if (segmentState.isLoading) {
@@ -76,7 +78,7 @@ fun RenderState(
         SegmentError()
     } else {
         RenderSegment(
-            segment = segmentState.segment as MovieSegmentData,
+            segment = segmentState.data,
             actionDispatcher = actionDispatcher,
         )
     }
@@ -84,15 +86,20 @@ fun RenderState(
 
 @Composable
 fun RenderSegment(
-    segment: MovieSegmentData,
+    segment: SegmentDataModel?,
     actionDispatcher: ActionDispatcher,
 ) {
-    Carousel(
-        id = segment.id,
-        title = segment.title,
-        actionDispatcher = actionDispatcher,
-        items = segment.movies,
-    )
+    segment?.let {
+        if (segment is CollectionDataModel) {
+            Carousel(
+                id = segment.id,
+                title = segment.title,
+                actionDispatcher = actionDispatcher,
+                items = segment.feeds as List<MovieDataModel>,
+            )
+        }
+    }
+
 }
 
 @Composable

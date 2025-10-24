@@ -1,9 +1,9 @@
 package com.android.filmy.di
 
-import android.os.Build
 import com.android.filmy.BuildConfig
 import com.android.filmy.network.MovieApi
-import com.datadog.android.okhttp.DatadogInterceptor
+import com.android.filmy.network.PeopleApi
+import com.android.filmy.network.TvApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -51,4 +51,12 @@ object NetworkModule {
     @Provides
     @Singleton
     fun providesMovieApi(retrofit: Retrofit): MovieApi = retrofit.create(MovieApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesTvShowsApi(retrofit: Retrofit): TvApi = retrofit.create(TvApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesPeopleApi(retrofit: Retrofit): PeopleApi = retrofit.create(PeopleApi::class.java)
 }

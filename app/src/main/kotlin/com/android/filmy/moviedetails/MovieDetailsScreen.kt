@@ -15,7 +15,7 @@ import com.android.filmy.mvi.UiAction
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Int,
+    movieId: String,
     modifier: Modifier = Modifier,
 ) {
     val actionDispatcher = LocalActionDispatcher.current
@@ -31,7 +31,7 @@ fun MovieDetailsScreen(
             UiAction.ScreenViewed(
                 "movie_detail", mapOf(
                     "screen_name" to "movie_detail",
-                    "movieId" to movieId.toString(),
+                    "movieId" to movieId,
                 )
             )
         )

@@ -5,28 +5,28 @@ import com.android.filmy.model.response.PaginatedResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface MovieApi {
-    @GET("movie/now_playing")
-    suspend fun getNowPlayingMovies(
+interface TvApi {
+    @GET("tv/top_rated")
+    suspend fun getTopRatedTvShows(
         @Query("language") language: String = "en-US",
-        @Query("page") page: Int = 1
+        @Query("page") page: Int = 1,
     ): PaginatedResponse<MediaContent>
 
-    @GET("movie/popular")
-    suspend fun getPopularMovies(
+    @GET("tv/popular")
+    suspend fun getPopularTvShows(
         @Query("language") language: String = "en-US",
-        @Query("page") page: Int = 1
+        @Query("page") page: Int = 1,
     ): PaginatedResponse<MediaContent>
 
-    @GET("movie/upcoming")
-    suspend fun getUpcomingMovies(
+    @GET("tv/on_the_air")
+    suspend fun getOnTheAirTvShows(
         @Query("language") language: String = "en-US",
-        @Query("page") page: Int = 1
+        @Query("page") page: Int = 1,
     ): PaginatedResponse<MediaContent>
 
-    @GET("movie/top_rated")
-    suspend fun getTopRatedMovies(
+    @GET("tv/airing_today")
+    suspend fun getAiringTodayTvShows(
         @Query("language") language: String = "en-US",
-        @Query("page") page: Int = 1
+        @Query("page") page: Int = 1,
     ): PaginatedResponse<MediaContent>
 }

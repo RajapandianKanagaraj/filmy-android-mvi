@@ -24,27 +24,15 @@ sealed interface Feed {
     }
 
     sealed interface TvFeed : Feed {
-        object NowPlayingFeed : TvFeed
+        object AiringTodayFeed : TvFeed
         object PopularFeed : TvFeed
         object TrendingFeed : TvFeed
         object TopRatedFeed : TvFeed
+        object OnTheAirFeed : TvFeed
     }
 
     sealed interface ActorFeed : Feed {
         object PopularFeed : ActorFeed
+        data class TrendingFeed(val timeWindow: String): ActorFeed
     }
 }
-
-//sealed interface MovieContentSegment : ContentSegment {
-//    object NowPlayingMovies : MovieContentSegment
-//    object UpcomingMovies : MovieContentSegment
-//    object PopularMovies : MovieContentSegment
-//    object TrendingMovies : MovieContentSegment
-//}
-//
-//sealed interface TvContentSegment : ContentSegment {
-//    object NowPlayingSeries : TvContentSegment
-//    object PopularSeries : TvContentSegment
-//    object TrendingSeries : TvContentSegment
-//    object UpcomingSeries : TvContentSegment
-//}

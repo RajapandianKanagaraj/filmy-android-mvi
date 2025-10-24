@@ -13,7 +13,7 @@ import javax.inject.Inject
 import kotlin.apply
 
 interface SegmentRepository {
-    val segmentState: StateFlow<List<SegmentState>>
+    val segmentState: StateFlow<List<SegmentLCEState>>
     suspend fun getContentSegments(segments: List<Segment>)
 }
 
@@ -21,15 +21,15 @@ class SegmentRepositoryImpl @Inject constructor(
     val collectionFetcher: CollectionFetcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : SegmentRepository {
-    private val _segmentState = MutableStateFlow<List<SegmentState>>(emptyList())
+    private val _segmentState = MutableStateFlow<List<SegmentLCEState>>(emptyList())
 
-    override val segmentState: StateFlow<List<SegmentState>>
+    override val segmentState: StateFlow<List<SegmentLCEState>>
         get() = _segmentState
 
     override suspend fun getContentSegments(segments: List<Segment>) {
         withContext(ioDispatcher) {
             val startingIndex = _segmentState.value.size
-            _segmentState.update { it + List(segments.size) { SegmentState.Loading} }
+            _segmentState.update { it + List(segments.size) { SegmentLCEState.Loading} }
 
             segments.mapIndexed { index, segment ->
                 async {
@@ -39,11 +39,11 @@ class SegmentRepositoryImpl @Inject constructor(
                                 collectionFetcher.fetchContent(segment)
                             }
                             is Segment.BannerSegment -> {
-                                SegmentState.Idle
+                                SegmentLCEState.Idle
                             }
                         }
                     } catch (e: Exception) {
-                        SegmentState(
+                        SegmentLCEState(
                             isLoading = false,
                             error = e.message
                         )
