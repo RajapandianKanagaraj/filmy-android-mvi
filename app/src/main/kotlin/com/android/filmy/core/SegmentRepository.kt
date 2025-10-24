@@ -1,6 +1,5 @@
 package com.android.filmy.core
 
-import com.android.filmy.data.MovieRepository
 import com.android.filmy.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -11,14 +10,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.apply
 
 interface SegmentRepository {
     val segmentState: StateFlow<List<SegmentState>>
-    suspend fun getContentSegments(segments: List<ContentSegment>)
+    suspend fun getContentSegments(segments: List<Segment>)
 }
 
 class SegmentRepositoryImpl @Inject constructor(
-    val movieRepository: MovieRepository,
+    val collectionFetcher: CollectionFetcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : SegmentRepository {
     private val _segmentState = MutableStateFlow<List<SegmentState>>(emptyList())
@@ -26,7 +26,7 @@ class SegmentRepositoryImpl @Inject constructor(
     override val segmentState: StateFlow<List<SegmentState>>
         get() = _segmentState
 
-    override suspend fun getContentSegments(segments: List<ContentSegment>) {
+    override suspend fun getContentSegments(segments: List<Segment>) {
         withContext(ioDispatcher) {
             val startingIndex = _segmentState.value.size
             _segmentState.update { it + List(segments.size) { SegmentState.Loading} }
@@ -35,18 +35,12 @@ class SegmentRepositoryImpl @Inject constructor(
                 async {
                     val resultState = try {
                         when (segment) {
-                            is MovieContentSegment -> {
-                                val movieSegment = movieRepository.getMovieSegment(segment)
-                                SegmentState(
-                                    isLoading = false,
-                                    segment = movieSegment,
-                                )
+                            is Segment.CollectionSegment -> {
+                                collectionFetcher.fetchContent(segment)
                             }
-
-                            TvContentSegment.NowPlayingSeries -> SegmentState.Idle
-                            TvContentSegment.PopularSeries -> SegmentState.Idle
-                            TvContentSegment.TrendingSeries -> SegmentState.Idle
-                            TvContentSegment.UpcomingSeries -> SegmentState.Idle
+                            is Segment.BannerSegment -> {
+                                SegmentState.Idle
+                            }
                         }
                     } catch (e: Exception) {
                         SegmentState(

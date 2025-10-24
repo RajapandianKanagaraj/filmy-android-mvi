@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.filmy.analytics.InitRumView
 import com.android.filmy.analytics.TrackingEvent
-import com.android.filmy.core.Segment.MovieSegment
+import com.android.filmy.core.SegmentData.MovieSegmentData
 import com.android.filmy.core.SegmentState
 import com.android.filmy.mvi.ActionDispatcher
 import com.android.filmy.mvi.LocalActionDispatcher
@@ -76,7 +76,7 @@ fun RenderState(
         SegmentError()
     } else {
         RenderSegment(
-            segment = segmentState.segment as MovieSegment,
+            segment = segmentState.segment as MovieSegmentData,
             actionDispatcher = actionDispatcher,
         )
     }
@@ -84,7 +84,7 @@ fun RenderState(
 
 @Composable
 fun RenderSegment(
-    segment: MovieSegment,
+    segment: MovieSegmentData,
     actionDispatcher: ActionDispatcher,
 ) {
     Carousel(

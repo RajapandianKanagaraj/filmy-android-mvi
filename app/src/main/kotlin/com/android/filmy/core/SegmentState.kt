@@ -2,7 +2,7 @@ package com.android.filmy.core
 
 data class SegmentState(
     val isLoading: Boolean = false,
-    val segment: Segment = Segment.EmptySegment,
+    val segment: SegmentData = SegmentData.EmptySegment,
     val error: String? = null,
 ) {
 
