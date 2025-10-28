@@ -92,6 +92,7 @@ dependencies {
     implementation(libs.retrofit.converter)
     implementation(libs.okhttp)
     implementation(libs.moshi)
+    implementation(libs.moshi.adapters)
     ksp(libs.moshi.codegen)
 
     //Coil

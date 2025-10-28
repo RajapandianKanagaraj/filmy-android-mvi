@@ -5,12 +5,14 @@ import javax.inject.Inject
 import com.android.filmy.core.Segment.CollectionSegment
 import com.android.filmy.parsers.MediaContentParser
 import com.android.filmy.parsers.PersonParser
+import com.android.filmy.parsers.TrendingContentParser
 
 class CollectionFetcher @Inject constructor(
     val feedRepository: FeedRepository,
     val paginatedCollectionParser: PaginatedCollectionParser,
     val mediaContentParser: MediaContentParser,
     val personParser: PersonParser,
+    val trendingContentParser: TrendingContentParser,
 ): ContentFetcher<CollectionSegment> {
     override suspend fun fetchContent(segment: CollectionSegment): SegmentLCEState {
         return when (segment.content) {
@@ -40,6 +42,15 @@ class CollectionFetcher @Inject constructor(
                     data = dataModel.updateTitle(getCollectionTitle(segment.content.feed)),
                 )
             }
+
+            is SegmentContent.AllContentSegment ->  {
+                val segmentFeed = feedRepository.getAllFeed(segment.content)
+                val dataModel = paginatedCollectionParser.parse(response = segmentFeed, itemsParser = trendingContentParser)
+                SegmentLCEState(
+                    isLoading = false,
+                    data = dataModel.updateTitle(getCollectionTitle(segment.content.feed)),
+                )
+            }
         }
     }
 
@@ -53,9 +64,25 @@ class CollectionFetcher @Inject constructor(
             is Feed.TvFeed.PopularFeed -> "Popular TV Shows"
             is Feed.TvFeed.OnTheAirFeed -> "On The Air TV Shows"
             is Feed.TvFeed.AiringTodayFeed -> "Airing Today TV Shows"
+            is Feed.TvFeed.TrendingFeed -> {
+                if (feed.timeWindow == "day") {
+                    "Trending TvShows Today"
+                } else if (feed.timeWindow == "week") {
+                    "Trending TvShows This Week"
+                } else {
+                    "Trending TvShows"
+                }
+            }
             is Feed.ActorFeed.PopularFeed -> "Popular Actor"
-            is Feed.MovieFeed.TrendingFeed -> "Trending Movies"
-            is Feed.TvFeed.TrendingFeed -> "Trending TV Shows"
+            is Feed.MovieFeed.TrendingFeed -> {
+                if (feed.timeWindow == "day") {
+                    "Trending Movies Today"
+                } else if (feed.timeWindow == "week") {
+                    "Trending Movies This Week"
+                } else {
+                    "Trending Movies"
+                }
+            }
             is Feed.ActorFeed.TrendingFeed -> {
                 if (feed.timeWindow == "day") {
                     "Trending Actors Today"
@@ -63,6 +90,15 @@ class CollectionFetcher @Inject constructor(
                     "Trending Actors This Week"
                 } else {
                     "Trending Actors"
+                }
+            }
+            is Feed.AllTrendingFeed -> {
+                if (feed.timeWindow == "day") {
+                    "Trending Today"
+                } else if (feed.timeWindow == "week") {
+                    "Trending This Week"
+                } else {
+                    "Trending"
                 }
             }
         }

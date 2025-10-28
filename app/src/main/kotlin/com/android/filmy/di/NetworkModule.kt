@@ -1,15 +1,20 @@
 package com.android.filmy.di
 
 import com.android.filmy.BuildConfig
+import com.android.filmy.model.response.FeedItemResponse
+import com.android.filmy.model.response.MediaContent
+import com.android.filmy.model.response.Person
 import com.android.filmy.network.MovieApi
 import com.android.filmy.network.PeopleApi
 import com.android.filmy.network.TvApi
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.Polymorphic
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -37,6 +42,12 @@ object NetworkModule {
     @Singleton
     fun providesRetrofit(client: OkHttpClient): Retrofit {
         val moshi = Moshi.Builder()
+            .add(
+                PolymorphicJsonAdapterFactory.of(FeedItemResponse::class.java, "media_type")
+                    .withSubtype(MediaContent::class.java, "movie")
+                    .withSubtype(MediaContent::class.java, "tv")
+                    .withSubtype(Person::class.java, "person")
+            )
             .addLast(KotlinJsonAdapterFactory())
             .build()
 

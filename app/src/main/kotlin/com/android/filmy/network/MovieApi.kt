@@ -1,8 +1,10 @@
 package com.android.filmy.network
 
+import com.android.filmy.model.response.FeedItemResponse
 import com.android.filmy.model.response.MediaContent
 import com.android.filmy.model.response.PaginatedResponse
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MovieApi {
@@ -29,4 +31,18 @@ interface MovieApi {
         @Query("language") language: String = "en-US",
         @Query("page") page: Int = 1
     ): PaginatedResponse<MediaContent>
+
+    @GET("trending/movie/{time_window}")
+    suspend fun getTrendingMovies(
+        @Path("time_window") timeWindow: String,
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = "en-US"
+    ): PaginatedResponse<MediaContent>
+
+    @GET("trending/all/{time_window}")
+    suspend fun getTrendingAll(
+        @Path("time_window") timeWindow: String,
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = "en-US"
+    ): PaginatedResponse<FeedItemResponse>
 }

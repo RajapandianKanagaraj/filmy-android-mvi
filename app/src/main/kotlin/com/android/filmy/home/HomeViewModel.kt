@@ -28,7 +28,6 @@ class HomeViewModel @Inject constructor(
     val datadogTracker: DatadogTracker,
 ) : ViewModel() {
     val state: StateFlow<List<SegmentLCEState>> = segmentRepository.segmentState
-    private val actions = MutableSharedFlow<HomeAction>()
 
     init {
         viewModelScope.launch {
@@ -52,6 +51,10 @@ class HomeViewModel @Inject constructor(
                     content = SegmentContent.ActorsSegment(feed = Feed.ActorFeed.PopularFeed),
                 ),
                 CollectionSegment(
+                    layout = CarouselLayout(),
+                    content = SegmentContent.AllContentSegment(feed = Feed.AllTrendingFeed("day"))
+                ),
+                CollectionSegment(
                     layout = GridLayout(),
                     content = MoviesSegment(feed = UpcomingFeed),
                 ),
@@ -60,12 +63,24 @@ class HomeViewModel @Inject constructor(
                     content = MoviesSegment(feed = PopularFeed),
                 ),
                 CollectionSegment(
+                    layout = CarouselLayout(),
+                    content = SegmentContent.AllContentSegment(feed = Feed.AllTrendingFeed("week"))
+                ),
+                CollectionSegment(
                     layout = GridLayout(),
                     content = SegmentContent.TvShowsSegment(feed = Feed.TvFeed.PopularFeed),
                 ),
                 CollectionSegment(
                     layout = CarouselLayout(),
+                    content = SegmentContent.TvShowsSegment(feed = Feed.TvFeed.TrendingFeed("week")),
+                ),
+                CollectionSegment(
+                    layout = CarouselLayout(),
                     content = SegmentContent.ActorsSegment(feed = Feed.ActorFeed.TrendingFeed("day")),
+                ),
+                CollectionSegment(
+                    layout = CarouselLayout(),
+                    content = MoviesSegment(feed = Feed.MovieFeed.TrendingFeed("day")),
                 ),
                 CollectionSegment(
                     layout = CarouselLayout(),
@@ -75,6 +90,11 @@ class HomeViewModel @Inject constructor(
                     layout = GridLayout(),
                     content = SegmentContent.TvShowsSegment(feed = Feed.TvFeed.OnTheAirFeed),
                 ),
+
+                CollectionSegment(
+                    layout = CarouselLayout(),
+                    content = MoviesSegment(feed = Feed.MovieFeed.TrendingFeed("week")),
+                ),
                 CollectionSegment(
                     layout = GridLayout(),
                     content = SegmentContent.TvShowsSegment(feed = Feed.TvFeed.AiringTodayFeed),
@@ -82,7 +102,11 @@ class HomeViewModel @Inject constructor(
                 CollectionSegment(
                     layout = CarouselLayout(),
                     content = SegmentContent.ActorsSegment(feed = Feed.ActorFeed.TrendingFeed("week")),
-                )
+                ),
+                CollectionSegment(
+                    layout = CarouselLayout(),
+                    content = SegmentContent.TvShowsSegment(feed = Feed.TvFeed.TrendingFeed("day")),
+                ),
             )
         )
     }
