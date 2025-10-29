@@ -9,8 +9,10 @@ import com.android.filmy.model.response.FeedItemResponse
 import com.android.filmy.model.response.MediaContent
 import com.android.filmy.model.response.PaginatedResponse
 import com.android.filmy.model.response.Person
+import com.android.filmy.model.response.Provider
 import com.android.filmy.network.MovieApi
 import com.android.filmy.network.PeopleApi
+import com.android.filmy.network.ProvidersApi
 import com.android.filmy.network.TvApi
 import javax.inject.Inject
 
@@ -19,12 +21,15 @@ interface FeedRepository {
     suspend fun getTvShowsFeed(segment: TvShowsSegment): PaginatedResponse<MediaContent>
     suspend fun getActorsFeed(segment: ActorsSegment): PaginatedResponse<Person>
     suspend fun getAllFeed(segment: SegmentContent.AllContentSegment): PaginatedResponse<FeedItemResponse>
+
+    suspend fun getProviderFeed(segment: SegmentContent.ProvidersSegment): PaginatedResponse<Provider>
 }
 
 class FeedRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi,
     private val tvApi: TvApi,
     private val peopleApi: PeopleApi,
+    private val providersApi: ProvidersApi,
 ) : FeedRepository {
 
     override suspend fun getMovieFeed(segment: MoviesSegment): PaginatedResponse<MediaContent> {
@@ -61,5 +66,12 @@ class FeedRepositoryImpl @Inject constructor(
 
     override suspend fun getAllFeed(segment: SegmentContent.AllContentSegment): PaginatedResponse<FeedItemResponse> {
        return movieApi.getTrendingAll(segment.feed.timeWindow, page = 1)
+    }
+
+    override suspend fun getProviderFeed(segment: SegmentContent.ProvidersSegment): PaginatedResponse<Provider> {
+        return when (segment.feed) {
+            is Feed.ProviderFeed.MovieProvidersFeed -> providersApi.getMovieProviders()
+            is Feed.ProviderFeed.TvShowProvidersFeed -> providersApi.getTvProviders()
+        }
     }
 }

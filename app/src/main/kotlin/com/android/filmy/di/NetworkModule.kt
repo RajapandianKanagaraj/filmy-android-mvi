@@ -4,8 +4,10 @@ import com.android.filmy.BuildConfig
 import com.android.filmy.model.response.FeedItemResponse
 import com.android.filmy.model.response.MediaContent
 import com.android.filmy.model.response.Person
+import com.android.filmy.model.response.Provider
 import com.android.filmy.network.MovieApi
 import com.android.filmy.network.PeopleApi
+import com.android.filmy.network.ProvidersApi
 import com.android.filmy.network.TvApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
@@ -47,6 +49,7 @@ object NetworkModule {
                     .withSubtype(MediaContent::class.java, "movie")
                     .withSubtype(MediaContent::class.java, "tv")
                     .withSubtype(Person::class.java, "person")
+                    .withSubtype(Provider::class.java, "provider")
             )
             .addLast(KotlinJsonAdapterFactory())
             .build()
@@ -57,7 +60,6 @@ object NetworkModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }
-
 
     @Provides
     @Singleton
@@ -70,4 +72,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun providesPeopleApi(retrofit: Retrofit): PeopleApi = retrofit.create(PeopleApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesProvidersApi(retrofit: Retrofit): ProvidersApi = retrofit.create(ProvidersApi::class.java)
 }

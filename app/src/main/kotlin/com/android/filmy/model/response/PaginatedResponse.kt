@@ -6,9 +6,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 data class PaginatedResponse<out T: FeedItemResponse>(
-    val page: Int,
-    @param: Json(name = "total_pages") val totalPages: Int,
-    @param: Json(name = "total_results") val totalResults: Int,
+    val page: Int? = 1,
+    @param: Json(name = "total_pages") val totalPages: Int? = 1,
+    @param: Json(name = "total_results") val totalResults: Int? = 10,
     val results: List<T>
 ): DataResponse
 
@@ -62,4 +62,17 @@ data class MediaContent(
 
     val posterUrl : String
         get() = "${BuildConfig.BASE_IMAGE_URL}${posterPath}"
+}
+
+@Serializable
+@SerialName("provider")
+data class Provider(
+    @param:Json(name = "provider_id") override val id: Int,
+    override val mediaType: String? = "provider",
+    @param:Json(name = "display_priority") val displayPriority: Int,
+    @param:Json(name = "logo_path") val logoPath: String,
+    @param:Json(name = "provider_name") val providerName: String,
+): FeedItemResponse {
+    val logoUrl : String
+        get() = "${BuildConfig.BASE_IMAGE_URL}${logoPath}"
 }

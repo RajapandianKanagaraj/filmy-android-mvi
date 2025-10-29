@@ -5,6 +5,7 @@ import javax.inject.Inject
 import com.android.filmy.core.Segment.CollectionSegment
 import com.android.filmy.parsers.MediaContentParser
 import com.android.filmy.parsers.PersonParser
+import com.android.filmy.parsers.ProvidersParser
 import com.android.filmy.parsers.TrendingContentParser
 
 class CollectionFetcher @Inject constructor(
@@ -13,6 +14,7 @@ class CollectionFetcher @Inject constructor(
     val mediaContentParser: MediaContentParser,
     val personParser: PersonParser,
     val trendingContentParser: TrendingContentParser,
+    val providersParser: ProvidersParser,
 ): ContentFetcher<CollectionSegment> {
     override suspend fun fetchContent(segment: CollectionSegment): SegmentLCEState {
         return when (segment.content) {
@@ -46,6 +48,15 @@ class CollectionFetcher @Inject constructor(
             is SegmentContent.AllContentSegment ->  {
                 val segmentFeed = feedRepository.getAllFeed(segment.content)
                 val dataModel = paginatedCollectionParser.parse(response = segmentFeed, itemsParser = trendingContentParser)
+                SegmentLCEState(
+                    isLoading = false,
+                    data = dataModel.updateTitle(getCollectionTitle(segment.content.feed)),
+                )
+            }
+
+            is SegmentContent.ProvidersSegment -> {
+                val segmentFeed = feedRepository.getProviderFeed(segment.content)
+                val dataModel = paginatedCollectionParser.parse(response = segmentFeed, itemsParser = providersParser)
                 SegmentLCEState(
                     isLoading = false,
                     data = dataModel.updateTitle(getCollectionTitle(segment.content.feed)),
@@ -101,6 +112,8 @@ class CollectionFetcher @Inject constructor(
                     "Trending"
                 }
             }
+            is Feed.ProviderFeed.MovieProvidersFeed -> "Watch Movies On"
+            is Feed.ProviderFeed.TvShowProvidersFeed -> "Watch TV Shows On"
         }
     }
 }

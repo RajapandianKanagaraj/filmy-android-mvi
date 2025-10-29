@@ -14,6 +14,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.android.filmy.model.MovieDataModel
 import com.android.filmy.model.PersonDataModel
+import com.android.filmy.model.ProviderDataModel
 import com.android.filmy.model.SegmentDataModel
 import com.android.filmy.mvi.ActionDispatcher
 import com.android.filmy.mvi.NavAction
@@ -101,6 +102,16 @@ fun<T: SegmentDataModel> Carousel(
                             posterUrl = item.profileUrl,
                             ancestorId = id,
                             onClick = { }
+                        )
+                    }
+
+                    is ProviderDataModel -> {
+                        ProviderCard(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .wrapContentSize(),
+                            posterUrl = item.logoUrl,
+                            provideName = item.providerName,
                         )
                     }
                 }

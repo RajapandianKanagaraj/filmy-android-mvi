@@ -12,7 +12,7 @@ class PaginatedCollectionParser @Inject constructor() {
         itemsParser: ContentParser<T>
     ): CollectionDataModel {
         return CollectionDataModel(
-            page = response.page,
+            page = response.page ?: 1,
             title = "",
             feeds = response.results.map {
                 itemsParser.parse(it)

@@ -13,6 +13,7 @@ sealed interface SegmentContent {
     class TvShowsSegment(val feed: Feed.TvFeed): SegmentContent
     class ActorsSegment(val feed: Feed.ActorFeed): SegmentContent
     class AllContentSegment(val feed: Feed.AllTrendingFeed): SegmentContent
+    class ProvidersSegment(val feed: Feed.ProviderFeed): SegmentContent
 }
 
 sealed interface Feed {
@@ -37,5 +38,10 @@ sealed interface Feed {
     sealed interface ActorFeed : Feed {
         object PopularFeed : ActorFeed
         data class TrendingFeed(val timeWindow: String): ActorFeed
+    }
+
+    sealed interface ProviderFeed: Feed {
+        object MovieProvidersFeed : ProviderFeed
+        object TvShowProvidersFeed : ProviderFeed
     }
 }
