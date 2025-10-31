@@ -64,15 +64,15 @@ fun MovieCard(
                     .fillMaxWidth()
                     .weight(1f)
             )
-            Text(
-                text = title,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding( horizontal = 8.dp, vertical = 4.dp)
-            )
+//            Text(
+//                text = title,
+//                maxLines = 2,
+//                overflow = TextOverflow.Ellipsis,
+//                style = MaterialTheme.typography.bodyMedium,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding( horizontal = 8.dp, vertical = 4.dp)
+//            )
         }
     }
 }

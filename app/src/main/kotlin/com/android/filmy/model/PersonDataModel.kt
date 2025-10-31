@@ -5,6 +5,7 @@ import com.android.filmy.model.response.MediaContent
 
 data class PersonDataModel(
     override val id: String,
+    override val contentType: ContentType = ContentType.PERSON,
     val name: String,
     val gender: Int,
     val adult: Boolean,

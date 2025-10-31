@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -14,12 +12,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.android.filmy.mvi.ActionDispatcherImpl
 import com.android.filmy.mvi.LocalActionDispatcher
-import com.android.filmy.ui.AppNavHost
-import com.android.filmy.ui.AppTopBar
-import com.android.filmy.ui.BottomNavBar
-import com.android.filmy.ui.NavIconType
+import com.android.filmy.ui.AppScaffold
 import com.android.filmy.ui.theme.FilmyAndroidMVITheme
-import com.datadog.android.compose.NavigationViewTrackingEffect
 import com.datadog.android.rum.GlobalRumMonitor
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -56,23 +50,11 @@ class MainActivity : ComponentActivity() {
                 }
 
                 CompositionLocalProvider(LocalActionDispatcher provides actionDispatcher) {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        topBar = {
-                            AppTopBar(
-                                navController = navController,
-                                navIconType = if (showBackArrow) NavIconType.BACK else NavIconType.NONE,
-                            )
-                        },
-                        bottomBar = {
-                            BottomNavBar(navController = navController)
-                        }
-                    ) { innerPadding ->
-                        AppNavHost(
-                            navController = navController,
-                            modifier = Modifier.padding(innerPadding),
-                        )
-                    }
+                    AppScaffold(
+                        navController = navController,
+                        showBackArrow = showBackArrow,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }

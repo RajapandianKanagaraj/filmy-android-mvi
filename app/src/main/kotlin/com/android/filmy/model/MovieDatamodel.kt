@@ -4,6 +4,7 @@ import com.android.filmy.BuildConfig
 
 data class MovieDataModel(
     override val id: String,
+    override val contentType: ContentType = ContentType.MOVIE,
     val adult: Boolean,
     val title: String,
     val overview: String,

@@ -12,7 +12,7 @@ import com.android.filmy.core.SegmentContent
 import com.android.filmy.core.SegmentContent.MoviesSegment
 
 object HomeSegments {
-    val segments = listOf(
+    val allSegments = listOf(
         CollectionSegment(
             layout = CarouselLayout(),
             content = MoviesSegment(feed = NowPlayingFeed),
