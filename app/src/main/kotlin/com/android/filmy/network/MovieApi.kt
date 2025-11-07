@@ -45,4 +45,16 @@ interface MovieApi {
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en-US"
     ): PaginatedResponse<FeedItemResponse>
+
+    @GET("movie/{movie_id}/similar")
+    suspend fun getSimilarMovies(
+        @Path("movie_id") movieId: String,
+        @Query("language") language: String = "en-US"
+    ): PaginatedResponse<MediaContent>
+
+    @GET("movie/{movie_id}/recommendations")
+    suspend fun getRecommendationsMovies(
+        @Path("movie_id") movieId: String,
+        @Query("language") language: String = "en-US"
+    ): PaginatedResponse<MediaContent>
 }

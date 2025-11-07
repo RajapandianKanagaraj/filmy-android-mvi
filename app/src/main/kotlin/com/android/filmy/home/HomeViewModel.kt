@@ -3,6 +3,8 @@ package com.android.filmy.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.filmy.analytics.DatadogTracker
+import com.android.filmy.analytics.tracking.TrackingParam
+import com.android.filmy.analytics.tracking.TrackingSubject
 import com.android.filmy.core.Segment
 import com.android.filmy.core.SegmentLCEState
 import com.android.filmy.core.SegmentRepository
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -58,35 +61,17 @@ class HomeViewModel @Inject constructor(
         selectedTab.value = tab
     }
 
-//    fun getMovieSegments(): List<SegmentLCEState> {
-//        return _state.value.filter { segmentState ->
-//            segmentState.data?.let { data ->
-//                isMovieSegment(data)
-//            } ?: false
-//        }
-//    }
-//
-//    fun getTvShowSegments(): List<SegmentLCEState> {
-//        return _state.value.filter { segmentState ->
-//            segmentState.data?.let { data ->
-//                isTvShowSegment(data)
-//            } ?: false
-//        }
-//    }
-//
-//    fun getAllSegments(): List<SegmentLCEState> {
-//        return _state.value
-//    }
-//
-//    private fun isMovieSegment(dataModel: SegmentDataModel): Boolean {
-//        return dataModel is CollectionDataModel && dataModel.contentType?.let { contentType ->
-//            contentType == ContentType.MOVIE
-//        } ?: false
-//    }
-//
-//    private fun isTvShowSegment(dataModel: SegmentDataModel): Boolean {
-//        return dataModel is CollectionDataModel && dataModel.contentType?.let { contentType ->
-//            contentType == ContentType.MOVIE
-//        } ?: false
-//    }
+    fun getTrackingSubject() = TrackingSubject(
+        id = "home_screen:${UUID.randomUUID()}",
+        name = "home_screen",
+        role = "screen",
+        metadata = mapOf("screen_name" to "Home"),
+    )
+
+    fun getTrackingParams() = TrackingParam(
+        id = "home_screen:${UUID.randomUUID()}",
+        name = "home_screen",
+        role = "screen",
+        metadata = mapOf("screen_name" to "Home"),
+    )
 }

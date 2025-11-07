@@ -1,10 +1,12 @@
 package com.android.filmy.model
 
 import com.android.filmy.BuildConfig
+import com.android.filmy.analytics.tracking.TrackingParam
 
 data class MovieDataModel(
     override val id: String,
     override val contentType: ContentType = ContentType.MOVIE,
+    override val trackingParam: TrackingParam = TrackingParam.Empty,
     val adult: Boolean,
     val title: String,
     val overview: String,
@@ -14,7 +16,7 @@ data class MovieDataModel(
     val voteCount: Int,
     val releaseDate: String,
     val originalLanguage: String,
-) : SegmentDataModel {
+) : SegmentDataModel, Trackable {
 
     val posterUrl : String
         get() = "${BuildConfig.BASE_IMAGE_URL}${posterPath}"

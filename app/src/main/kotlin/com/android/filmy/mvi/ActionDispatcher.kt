@@ -1,10 +1,12 @@
 package com.android.filmy.mvi
 
+import android.util.Log
 import androidx.navigation.NavController
 import com.android.filmy.analytics.DatadogTracker
 import com.android.filmy.analytics.TrackingEvent
+import com.android.filmy.analytics.tracking.toJsonString
 import com.android.filmy.mvi.UiAction.*
-import com.android.filmy.ui.navigation.destinations.MovieDetailsDestination
+import com.android.filmy.ui.navigation.destinations.ContentDetailsDestination
 import javax.inject.Inject
 
 interface ActionDispatcher {
@@ -29,8 +31,8 @@ class ActionDispatcherImpl @Inject constructor(
     private fun handleNavAction(action: NavAction) {
         when(action) {
             NavAction.navigateBack -> navController?.popBackStack()
-            is NavAction.navigateToMovieDetails -> {
-                navController?.navigate(MovieDetailsDestination(action.movieId))
+            is NavAction.navigateToContentDetails -> {
+                navController?.navigate(ContentDetailsDestination(action.contentId, action.contentType))
             }
             is NavAction.navigateToTab -> navController?.navigate(action.tabRoute)
         }
@@ -42,6 +44,18 @@ class ActionDispatcherImpl @Inject constructor(
             is ViewDisappeared -> datadogTracker.trackViewEvent(TrackingEvent.VIEW_DISAPPEARED, action.attributes)
             is ScreenViewed -> datadogTracker.trackPageEvent(TrackingEvent.SCREEN_VIEWED, action.attributes)
             is ViewClicked -> datadogTracker.trackTapEvent(TrackingEvent.VIEW_CLICKED, action.attributes)
+            is OnAppeared -> {
+                val subject = action.trackingSubject.toJsonString()
+                Log.i("TrackingSubject", "OnAppeared: $subject")
+            }
+            is OnDisappeared -> {
+                val subject = action.trackingSubject.toJsonString()
+                Log.i("TrackingSubject", "OnDisappeared: $subject")
+            }
+            is onViewClicked -> {
+                val subject = action.trackingSubject.toJsonString()
+                Log.i("TrackingSubject", "onViewClicked: $subject")
+            }
         }
     }
 }

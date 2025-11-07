@@ -90,5 +90,13 @@ object HomeSegments {
             layout = CarouselLayout(),
             content = SegmentContent.TvShowsSegment(feed = Feed.TvFeed.TrendingFeed("day")),
         ),
+        CollectionSegment(
+            layout = GridLayout(),
+            content = MoviesSegment(feed = Feed.MovieFeed.SimilarFeed("1197137")),
+        ),
+        CollectionSegment(
+            layout = GridLayout(),
+            content = MoviesSegment(feed = Feed.MovieFeed.RecommendationFeed("1197137")),
+        ),
     )
 }

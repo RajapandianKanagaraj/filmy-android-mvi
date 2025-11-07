@@ -96,6 +96,8 @@ class CollectionFetcher @Inject constructor(
             is Feed.TvFeed.PopularFeed -> "Popular TV Shows"
             is Feed.TvFeed.OnTheAirFeed -> "On The Air TV Shows"
             is Feed.TvFeed.AiringTodayFeed -> "Airing Today TV Shows"
+            is Feed.MovieFeed.RecommendationFeed -> "Recommended Movies"
+            is Feed.MovieFeed.SimilarFeed -> "Similar Movies"
             is Feed.TvFeed.TrendingFeed -> {
                 if (feed.timeWindow == "day") {
                     "Trending TvShows Today"

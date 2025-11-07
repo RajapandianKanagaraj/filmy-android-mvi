@@ -21,7 +21,6 @@ fun PersonCard(
     id: String,
     title: String,
     posterUrl: String,
-    ancestorId: String? = null,
     onClick: () -> Unit,
 ) {
     Card(

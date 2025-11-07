@@ -1,5 +1,6 @@
 package com.android.filmy.parsers
 
+import com.android.filmy.model.ContentType
 import com.android.filmy.model.MovieDataModel
 import com.android.filmy.model.PersonDataModel
 import com.android.filmy.model.SegmentDataModel
@@ -9,7 +10,7 @@ import com.android.filmy.model.response.Person
 import javax.inject.Inject
 
 class TrendingContentParser @Inject constructor() : ContentParser<FeedItemResponse> {
-    override fun parse(response: FeedItemResponse): SegmentDataModel {
+    override fun parse(response: FeedItemResponse, contentType: ContentType): SegmentDataModel {
         return when (response.mediaType) {
             "movie", "tv" -> {
                 response as MediaContent
@@ -17,6 +18,7 @@ class TrendingContentParser @Inject constructor() : ContentParser<FeedItemRespon
                     id = response.id.toString(),
                     title = response.displayTitle,
                     adult = response.adult,
+                    contentType = contentType,
                     overview = response.overview ?: "",
                     voteCount = response.voteCount ?: 0,
                     voteAverage = response.voteAverage ?: 0.0,

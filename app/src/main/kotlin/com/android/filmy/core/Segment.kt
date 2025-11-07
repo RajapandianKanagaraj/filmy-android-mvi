@@ -25,6 +25,8 @@ sealed interface Feed {
         object PopularFeed : MovieFeed
         data class TrendingFeed(val timeWindow: String) : MovieFeed
         object TopRatedFeed : MovieFeed
+        data class RecommendationFeed(val movieId: String) : MovieFeed
+        data class SimilarFeed(val movieId: String) : MovieFeed
     }
 
     sealed interface TvFeed : Feed {

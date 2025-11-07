@@ -7,24 +7,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryScrollableTabRow
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,14 +34,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.filmy.analytics.InitRumView
 import com.android.filmy.analytics.TrackingEvent
+import com.android.filmy.analytics.tracking.LocalTrackingContext
+import com.android.filmy.analytics.tracking.TrackingContext
+import com.android.filmy.analytics.tracking.TrackingParam
+import com.android.filmy.analytics.tracking.TrackingSubject
 import com.android.filmy.core.SegmentLCEState
 import com.android.filmy.model.CollectionDataModel
 import com.android.filmy.model.SegmentDataModel
-import com.android.filmy.mvi.ActionDispatcher
-import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.ui.TopNavTab
 import com.android.filmy.ui.TopNavTabs
+import com.android.filmy.ui.TrackableContent
 import com.android.filmy.ui.components.Carousel
+import com.android.filmy.ui.dispatchOnAppear
 
 @Composable
 fun HomeScreen(
@@ -56,12 +54,6 @@ fun HomeScreen(
 ) {
     val datadogTracker = viewModel.datadogTracker
     val state by viewModel.state.collectAsState()
-    val actionDispatcher = LocalActionDispatcher.current
-
-    val topNavTabs = remember { TopNavTabs.allTabs }
-
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
-    var selectedTab by remember { mutableStateOf(topNavTabs[selectedTabIndex]) }
 
     InitRumView(
         viewKey = "HomeScreen",
@@ -72,31 +64,129 @@ fun HomeScreen(
         datadogTracker.trackPageEvent(TrackingEvent.SCREEN_VIEWED, mapOf("screen_name" to "Home"))
     }
 
-    Column(
+    // Solution #1
+    TrackableHomeScreen(
         modifier = modifier,
+        state = state,
+        trackingParams = viewModel.getTrackingParams(),
     ) {
-        Row(
-            modifier = Modifier
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        viewModel.onTabSelected(it)
+    }
+
+    // Solution #2
+//    CustomModifierHomeScreen(
+//        modifier = modifier,
+//        state = state,
+//        trackingParams = viewModel.getTrackingParams(),
+//    ) {
+//        viewModel.onTabSelected(it)
+//    }
+}
+
+// Solution #1 - Using Compose Wrapper
+@Composable
+private fun TrackableHomeScreen(
+    modifier: Modifier = Modifier,
+    state: List<SegmentLCEState>,
+    trackingParams: TrackingParam,
+    onTabSelected: (TopNavTab) -> Unit = {},
+) {
+    val topNavTabs = remember { TopNavTabs.allTabs }
+
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTab by remember { mutableStateOf(topNavTabs[selectedTabIndex]) }
+
+    TrackableContent(
+        trackingParam = trackingParams,
+    ) {
+        Column(
+            modifier = modifier
         ) {
-            topNavTabs.forEachIndexed { index, tab ->
-                ContentTab(topNavTab = tab, selectedTab = selectedTab) {
-                    selectedTabIndex = index
-                    selectedTab = tab
-                    viewModel.onTabSelected(tab)
+            Row(
+                modifier = Modifier
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                topNavTabs.forEachIndexed { index, tab ->
+                    ContentTab(topNavTab = tab, selectedTab = selectedTab) {
+                        selectedTabIndex = index
+                        selectedTab = tab
+                        onTabSelected
+                    }
                 }
             }
-        }
 
-        TabContent(
-            tab = selectedTab,
-            state = state,
-            actionDispatcher = actionDispatcher,
-            viewModel = viewModel,
-            modifier = Modifier.fillMaxSize()
+            TabContent(
+                tab = selectedTab,
+                state = state,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+// Solution #2 - Using Compose Wrapper
+@Composable
+private fun CustomModifierHomeScreen(
+    modifier: Modifier = Modifier,
+    state: List<SegmentLCEState>,
+    trackingParams: TrackingParam,
+    onTabSelected: (TopNavTab) -> Unit = {},
+) {
+    val topNavTabs = remember { TopNavTabs.allTabs }
+
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTab by remember { mutableStateOf(topNavTabs[selectedTabIndex]) }
+
+    val localTrackingContext = LocalTrackingContext.current
+
+    val trackingSubject = remember {
+        TrackingSubject(
+            id = trackingParams.id,
+            name = trackingParams.name,
+            role = trackingParams.role,
+            metadata = trackingParams.metadata,
+            parentId = localTrackingContext?.id.orEmpty(),
+            parentName = localTrackingContext?.name.orEmpty(),
+            ancestorChain = localTrackingContext?.ancestorChain.orEmpty() + ":" + trackingParams.id
         )
+    }
+
+    val newTrackingContext = remember(trackingSubject.id, trackingSubject.name) {
+        TrackingContext(
+            id = trackingSubject.id,
+            name = trackingSubject.name,
+            ancestorChain = trackingSubject.ancestorChain,
+        )
+    }
+
+    CompositionLocalProvider(LocalTrackingContext provides newTrackingContext) {
+        Column(
+            modifier = modifier
+                .dispatchOnAppear(trackingSubject = trackingSubject),
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                topNavTabs.forEachIndexed { index, tab ->
+                    ContentTab(topNavTab = tab, selectedTab = selectedTab) {
+                        selectedTabIndex = index
+                        selectedTab = tab
+                        onTabSelected
+                    }
+                }
+            }
+
+            TabContent(
+                tab = selectedTab,
+                state = state,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
@@ -137,22 +227,17 @@ fun ContentTab(
 fun TabContent(
     tab: TopNavTab,
     state: List<SegmentLCEState>,
-    actionDispatcher: ActionDispatcher,
-    viewModel: HomeViewModel,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
         items(state) { segment ->
-            RenderState(segment, actionDispatcher)
+            RenderState(segment)
         }
     }
 }
 
 @Composable
-fun RenderState(
-    segmentState: SegmentLCEState,
-    actionDispatcher: ActionDispatcher,
-) {
+fun RenderState(segmentState: SegmentLCEState) {
     if (segmentState.isLoading) {
         SegmentLoading()
     } else if (segmentState.error != null) {
@@ -160,27 +245,20 @@ fun RenderState(
     } else {
         RenderSegment(
             segment = segmentState.data,
-            actionDispatcher = actionDispatcher,
         )
     }
 }
 
 @Composable
-fun RenderSegment(
-    segment: SegmentDataModel?,
-    actionDispatcher: ActionDispatcher,
-) {
+fun RenderSegment(segment: SegmentDataModel?) {
     segment?.let {
         if (segment is CollectionDataModel) {
             Carousel(
-                id = segment.id,
-                title = segment.title,
-                actionDispatcher = actionDispatcher,
+                dataModel = segment,
                 items = segment.feeds,
             )
         }
     }
-
 }
 
 @Composable

@@ -39,6 +39,8 @@ class FeedRepositoryImpl @Inject constructor(
             is Feed.MovieFeed.TrendingFeed -> movieApi.getTrendingMovies(segment.feed.timeWindow, page = 1)
             is Feed.MovieFeed.UpcomingFeed -> movieApi.getUpcomingMovies(page = 1)
             is Feed.MovieFeed.TopRatedFeed -> movieApi.getTopRatedMovies(page = 1)
+            is Feed.MovieFeed.RecommendationFeed -> movieApi.getRecommendationsMovies(segment.feed.movieId)
+            is Feed.MovieFeed.SimilarFeed -> movieApi.getSimilarMovies(segment.feed.movieId)
         }
     }
 

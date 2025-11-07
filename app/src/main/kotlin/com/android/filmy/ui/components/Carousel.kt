@@ -8,114 +8,161 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.android.filmy.analytics.tracking.LocalTrackingContext
+import com.android.filmy.analytics.tracking.TrackingContext
+import com.android.filmy.analytics.tracking.TrackingSubject
+import com.android.filmy.model.CollectionDataModel
 import com.android.filmy.model.MovieDataModel
 import com.android.filmy.model.PersonDataModel
 import com.android.filmy.model.ProviderDataModel
 import com.android.filmy.model.SegmentDataModel
-import com.android.filmy.mvi.ActionDispatcher
-import com.android.filmy.mvi.NavAction
-import com.android.filmy.mvi.UiAction
+import com.android.filmy.ui.TrackableContent
+import com.android.filmy.ui.dispatchOnAppear
 
 @Composable
-fun<T: SegmentDataModel> Carousel(
-    id: String,
-    title: String,
+fun <T : SegmentDataModel> Carousel(
+    dataModel: CollectionDataModel,
     items: List<T>,
-    actionDispatcher: ActionDispatcher,
     modifier: Modifier = Modifier,
 ) {
-    DisposableEffect(Unit) {
-        actionDispatcher.dispatch(
-            UiAction.ViewAppeared(
-                "$title Carousel",
-                mutableMapOf(
-                    "view_type" to "carousel",
-                    "id" to id,
-                    "title" to title,
-                    "num_of_items" to items.size,
-                )
+
+//    Solution #1
+    TrackableCarousel(
+        dataModel = dataModel,
+        items = items,
+        modifier = modifier,
+    )
+
+//    Solution #2
+
+//    CustomModifierCarousel(
+//        dataModel = dataModel,
+//        items = items,
+//        modifier = modifier,
+//    )
+}
+
+// Solution #1 - Using Compose Wrapper
+@Composable
+private fun <T : SegmentDataModel> TrackableCarousel(
+    dataModel: CollectionDataModel,
+    items: List<T>,
+    modifier: Modifier = Modifier,
+) {
+    TrackableContent(
+        trackingParam = dataModel.trackingParam
+    ) {
+        Column(
+            modifier = modifier
+        ) {
+            Text(
+                text = dataModel.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(12.dp)
             )
-        )
-        onDispose {
-            actionDispatcher.dispatch(
-                UiAction.ViewDisappeared(
-                    "$title Carousel",
-                    mutableMapOf(
-                        "view_type" to "carousel",
-                        "id" to id,
-                        "title" to title,
-                        "num_of_items" to items.size,
-                    )
-                )
-            )
-        }
-    }
 
-    Column(modifier = modifier) {
-        Text(
-            text = title,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(12.dp)
-        )
-
-        LazyRow(modifier = Modifier) {
-            items(items, key = { it.id }) { item ->
-                when (item) {
-                    is MovieDataModel -> {
-                        MovieCard(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .wrapContentSize(),
-                            id = item.id,
-                            title = item.title,
-                            posterUrl = item.posterUrl,
-                            ancestorId = id,
-                            onClick = {
-                                actionDispatcher.dispatch(
-                                    UiAction.ViewClicked(
-                                        "movie_card ${item.id}",
-                                        mapOf(
-                                            "ancestorId" to id,
-                                            "movie_id" to item.id,
-                                            "movie_title" to item.title,
-                                            "poster_url" to item.posterUrl,
-                                        )
-                                    )
-                                )
-                                actionDispatcher.dispatch(NavAction.navigateToMovieDetails(item.id))
-                            }
-                        )
-                    }
-                    is PersonDataModel -> {
-                        PersonCard(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .wrapContentSize(),
-                            id = item.id,
-                            title = item.name,
-                            posterUrl = item.profileUrl,
-                            ancestorId = id,
-                            onClick = { }
-                        )
-                    }
-
-                    is ProviderDataModel -> {
-                        ProviderCard(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .wrapContentSize(),
-                            posterUrl = item.logoUrl,
-                            provideName = item.providerName,
-                        )
-                    }
+            LazyRow(modifier = Modifier) {
+                items(items, key = { it.id }) { item ->
+                    CollectionItemResolver(item = item)
                 }
             }
+        }
+    }
+}
+
+// Solution #2 - Using Custom Modifier to dispatch the Tracking Events
+@Composable
+private fun <T : SegmentDataModel> CustomModifierCarousel(
+    dataModel: CollectionDataModel,
+    items: List<T>,
+    modifier: Modifier = Modifier,
+) {
+    val localTrackingContext = LocalTrackingContext.current
+
+    val trackingParam = remember {
+        dataModel.trackingParam
+    }
+    val trackingSubject = remember {
+        TrackingSubject(
+            id = trackingParam.id,
+            name = trackingParam.name,
+            role = trackingParam.role,
+            metadata = trackingParam.metadata,
+            parentId = localTrackingContext?.id.orEmpty(),
+            parentName = localTrackingContext?.name.orEmpty(),
+            ancestorChain = localTrackingContext?.ancestorChain.orEmpty() + ":" + trackingParam.id,
+        )
+    }
+
+    val newTrackingContext = remember(trackingSubject.id, trackingSubject.name) {
+        TrackingContext(
+            id = trackingSubject.id,
+            name = trackingSubject.name,
+            ancestorChain = trackingSubject.ancestorChain,
+        )
+    }
+
+    CompositionLocalProvider(LocalTrackingContext provides newTrackingContext) {
+        Column(
+            modifier = modifier
+                .dispatchOnAppear(trackingSubject = trackingSubject)
+        ) {
+            Text(
+                text = dataModel.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(12.dp)
+            )
+
+            LazyRow(modifier = Modifier) {
+                items(items, key = { it.id }) { item ->
+                    CollectionItemResolver(item = item)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun <T : SegmentDataModel> CollectionItemResolver(item: T) {
+    when (item) {
+        is MovieDataModel -> {
+            MovieCard(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .wrapContentSize(),
+                dataModel = item,
+            )
+        }
+
+        is PersonDataModel -> {
+            PersonCard(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .wrapContentSize(),
+                id = item.id,
+                title = item.name,
+                posterUrl = item.profileUrl,
+                onClick = { }
+            )
+        }
+
+        is ProviderDataModel -> {
+            ProviderCard(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .wrapContentSize(),
+                posterUrl = item.logoUrl,
+                provideName = item.providerName,
+            )
         }
     }
 }
