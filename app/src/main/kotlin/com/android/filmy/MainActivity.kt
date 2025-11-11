@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.android.filmy.mvi.ActionDispatcherImpl
+import com.android.filmy.mvi.ActionDispatcher
 import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.ui.AppScaffold
 import com.android.filmy.ui.theme.FilmyAndroidMVITheme
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var actionDispatcher: ActionDispatcherImpl
+    lateinit var actionDispatcher: ActionDispatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FilmyAndroidMVITheme {
                 val navController = rememberNavController()
-                actionDispatcher.initialize(navController)
+                actionDispatcher.setNavController(navController)
 
 //                NavigationViewTrackingEffect(
 //                    navController = navController,

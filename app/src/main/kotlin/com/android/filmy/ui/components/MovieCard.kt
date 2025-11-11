@@ -56,22 +56,14 @@ fun TrackableMovieCard(
     TrackableContent(
         trackingParam = dataModel.trackingParam
     ) {
-        val localTrackingContext = LocalTrackingContext.current
+        val parentContext = LocalTrackingContext.current
         val trackingParam = remember {
             dataModel.trackingParam
         }
 
         Card(
             onClick = {
-                val trackingSubject = TrackingSubject(
-                    id = trackingParam.id,
-                    name = trackingParam.name,
-                    role = trackingParam.role,
-                    metadata = trackingParam.metadata,
-                    indexWithInParent = localTrackingContext?.childCount?.get() ?: 0,
-                    ancestorChain = localTrackingContext?.ancestorChain.orEmpty()
-                )
-                actionDispatcher.dispatch(UiAction.onViewClicked(trackingSubject))
+                actionDispatcher.dispatch(UiAction.onViewClicked(trackingParam, parentContext))
                 actionDispatcher.dispatch(
                     NavAction.navigateToContentDetails(
                         dataModel.id,
@@ -102,68 +94,68 @@ fun TrackableMovieCard(
 }
 
 // Solution #2 - Using Custom Modifier to dispatch the Tracking Events
-@Composable
-fun CustomModifierMovieCard(
-    modifier: Modifier = Modifier,
-    dataModel: MovieDataModel,
-) {
-    val actionDispatcher = LocalActionDispatcher.current
-    val localTrackingContext = LocalTrackingContext.current
-
-    val trackingParams = remember {
-        dataModel.trackingParam
-    }
-    val trackingSubject = remember {
-        TrackingSubject(
-            id = trackingParams.id,
-            name = trackingParams.name,
-            role = trackingParams.role,
-            metadata = trackingParams.metadata,
-            parentId = localTrackingContext?.id.orEmpty(),
-            parentName = localTrackingContext?.name.orEmpty(),
-        ).copy(
-            ancestorChain = localTrackingContext?.ancestorChain.orEmpty() + ":" + trackingParams.id
-        )
-    }
-
-    val newTrackingContext = remember(trackingSubject.id, trackingSubject.name) {
-        TrackingContext(
-            id = trackingSubject.id,
-            name = trackingSubject.name,
-            ancestorChain = trackingSubject.ancestorChain,
-        )
-    }
-
-    CompositionLocalProvider(LocalTrackingContext provides newTrackingContext) {
-        Card(
-            onClick = {
-                actionDispatcher.dispatch(UiAction.onViewClicked(trackingSubject))
-                actionDispatcher.dispatch(
-                    NavAction.navigateToContentDetails(
-                        dataModel.id,
-                        contentType = dataModel.contentType
-                    )
-                )
-            },
-            modifier = modifier
-                .width(160.dp)
-                .aspectRatio(2f / 3f)
-                .semantics {
-                    contentDescription = dataModel.title
-                    role = Role.Button
-                }
-                .dispatchOnAppear(trackingSubject = trackingSubject),
-        ) {
-            Column {
-                AsyncImage(
-                    model = dataModel.posterUrl,
-                    contentDescription = dataModel.title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-            }
-        }
-    }
-}
+//@Composable
+//fun CustomModifierMovieCard(
+//    modifier: Modifier = Modifier,
+//    dataModel: MovieDataModel,
+//) {
+//    val actionDispatcher = LocalActionDispatcher.current
+//    val localTrackingContext = LocalTrackingContext.current
+//
+//    val trackingParams = remember {
+//        dataModel.trackingParam
+//    }
+//    val trackingSubject = remember {
+//        TrackingSubject(
+//            id = trackingParams.id,
+//            name = trackingParams.name,
+//            role = trackingParams.role,
+//            metadata = trackingParams.metadata,
+//            parentId = localTrackingContext?.id.orEmpty(),
+//            parentName = localTrackingContext?.name.orEmpty(),
+//        ).copy(
+//            ancestorChain = localTrackingContext?.ancestorChain.orEmpty() + ":" + trackingParams.id
+//        )
+//    }
+//
+//    val newTrackingContext = remember(trackingSubject.id, trackingSubject.name) {
+//        TrackingContext(
+//            id = trackingSubject.id,
+//            name = trackingSubject.name,
+//            ancestorChain = trackingSubject.ancestorChain,
+//        )
+//    }
+//
+//    CompositionLocalProvider(LocalTrackingContext provides newTrackingContext) {
+//        Card(
+//            onClick = {
+//                actionDispatcher.dispatch(UiAction.onViewClicked(trackingSubject))
+//                actionDispatcher.dispatch(
+//                    NavAction.navigateToContentDetails(
+//                        dataModel.id,
+//                        contentType = dataModel.contentType
+//                    )
+//                )
+//            },
+//            modifier = modifier
+//                .width(160.dp)
+//                .aspectRatio(2f / 3f)
+//                .semantics {
+//                    contentDescription = dataModel.title
+//                    role = Role.Button
+//                }
+//                .dispatchOnAppear(trackingSubject = trackingSubject),
+//        ) {
+//            Column {
+//                AsyncImage(
+//                    model = dataModel.posterUrl,
+//                    contentDescription = dataModel.title,
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .weight(1f)
+//                )
+//            }
+//        }
+//    }
+//}

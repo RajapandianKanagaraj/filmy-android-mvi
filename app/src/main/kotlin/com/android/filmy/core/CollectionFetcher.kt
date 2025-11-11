@@ -107,7 +107,12 @@ class CollectionFetcher @Inject constructor(
                     "Trending TvShows"
                 }
             }
-
+            is Feed.MovieFeed.DiscoverFeed -> {
+                "Popular Movies on ${feed.watchProviderName}"
+            }
+            is Feed.TvFeed.DiscoverFeed -> {
+                "Popular TV Shows on ${feed.watchProviderName}"
+            }
             is Feed.ActorFeed.PopularFeed -> "Popular Actor"
             is Feed.MovieFeed.TrendingFeed -> {
                 if (feed.timeWindow == "day") {
@@ -141,6 +146,7 @@ class CollectionFetcher @Inject constructor(
 
             is Feed.ProviderFeed.MovieProvidersFeed -> "Watch Movies On"
             is Feed.ProviderFeed.TvShowProvidersFeed -> "Watch TV Shows On"
+            is Feed.ProviderFeed.AllProvidersFeed -> "Watch On"
         }
     }
 }

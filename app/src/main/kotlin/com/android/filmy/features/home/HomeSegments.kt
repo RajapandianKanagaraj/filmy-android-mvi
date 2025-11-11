@@ -1,4 +1,4 @@
-package com.android.filmy.home
+package com.android.filmy.features.home
 
 import com.android.filmy.core.CarouselLayout
 import com.android.filmy.core.Feed

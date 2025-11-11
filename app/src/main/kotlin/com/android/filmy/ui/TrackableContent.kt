@@ -23,7 +23,7 @@ fun TrackableContent(
         parentTrackingContext?.childCount?.getAndIncrement() ?: 0
     }
 
-    val trackingSubject = remember {
+    val trackingSubject = remember(trackingParam.id, trackingParam.name) {
         TrackingSubject(
             id = trackingParam.id,
             name = trackingParam.name,

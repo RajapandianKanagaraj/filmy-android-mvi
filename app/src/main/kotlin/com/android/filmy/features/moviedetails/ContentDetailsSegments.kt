@@ -1,4 +1,4 @@
-package com.android.filmy.moviedetails
+package com.android.filmy.features.moviedetails
 
 import com.android.filmy.core.Feed
 import com.android.filmy.core.GridLayout

@@ -37,4 +37,12 @@ interface TvApi {
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en-US"
     ): PaginatedResponse<MediaContent>
+
+    @GET("discover/tv")
+    suspend fun discoverTvShows(
+        @Query("language") language: String = "en-US",
+        @Query("with_watch_providers") watchKey: String,
+        @Query("watch_region") watchRegion: String = "US",
+        @Query("sort_by") sortBy: String,
+    ): PaginatedResponse<MediaContent>
 }

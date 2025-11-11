@@ -1,5 +1,6 @@
 package com.android.filmy.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,13 +14,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.android.filmy.analytics.tracking.LocalTrackingContext
+import com.android.filmy.model.ProviderDataModel
+import com.android.filmy.mvi.LocalActionDispatcher
+import com.android.filmy.mvi.ProviderAction
+import com.android.filmy.mvi.UiAction.onViewClicked
 
 @Composable
 fun ProviderCard(
     modifier: Modifier = Modifier,
-    posterUrl: String,
-    provideName: String,
+    dataModel: ProviderDataModel,
 ) {
+    val actionDispatcher = LocalActionDispatcher.current
+    val parentContext = LocalTrackingContext.current
+
 //    Card(
 //        modifier = modifier
 //            .height(120.dp)
@@ -41,11 +49,15 @@ fun ProviderCard(
 
     Card(
         modifier = modifier
-            .wrapContentSize()
+            .wrapContentSize(),
+        onClick = {
+            actionDispatcher.dispatch(onViewClicked(dataModel.trackingParam, parentContext))
+            actionDispatcher.dispatch(ProviderAction.OnProviderSelected(dataModel))
+        }
     ) {
         AsyncImage(
-            model = posterUrl,
-            contentDescription = provideName,
+            model = dataModel.logoUrl,
+            contentDescription = dataModel.providerName,
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .fillMaxSize()

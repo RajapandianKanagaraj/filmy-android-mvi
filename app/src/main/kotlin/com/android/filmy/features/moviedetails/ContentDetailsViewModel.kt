@@ -1,4 +1,4 @@
-package com.android.filmy.moviedetails
+package com.android.filmy.features.moviedetails
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

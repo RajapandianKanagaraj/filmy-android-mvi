@@ -15,8 +15,12 @@ data class TrackingSubject(
     val indexWithInParent: Int = 0,
 ) {
     companion object {
-        val Empty = TrackingSubject(id = "", name = "", role = "")
+        val Empty = TrackingSubject(id = "", name = "", role = "", indexWithInParent = 0)
     }
 }
 
-fun TrackingSubject.toJsonString() = Json.encodeToString(this)
+private val json = Json {
+    encodeDefaults = true
+    prettyPrint = true
+}
+fun TrackingSubject.toJsonString() = json.encodeToString(this)

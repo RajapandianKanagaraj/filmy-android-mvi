@@ -15,6 +15,7 @@ import kotlin.apply
 interface SegmentRepository {
     val segmentState: StateFlow<List<SegmentLCEState>>
     suspend fun getContentSegments(segments: List<Segment>)
+    suspend fun getSegment(segment: Segment): StateFlow<SegmentLCEState>
 }
 
 class SegmentRepositoryImpl @Inject constructor(
@@ -27,27 +28,14 @@ class SegmentRepositoryImpl @Inject constructor(
         get() = _segmentState
 
     override suspend fun getContentSegments(segments: List<Segment>) {
+        _segmentState.update { emptyList() }
         withContext(ioDispatcher) {
             val startingIndex = _segmentState.value.size
-            _segmentState.update { it + List(segments.size) { SegmentLCEState.Loading} }
+            _segmentState.update { it + List(segments.size) { SegmentLCEState.Loading } }
 
             segments.mapIndexed { index, segment ->
                 async {
-                    val resultState = try {
-                        when (segment) {
-                            is Segment.CollectionSegment -> {
-                                collectionFetcher.fetchContent(segment)
-                            }
-                            is Segment.BannerSegment -> {
-                                SegmentLCEState.Idle
-                            }
-                        }
-                    } catch (e: Exception) {
-                        SegmentLCEState(
-                            isLoading = false,
-                            error = e.message
-                        )
-                    }
+                    val resultState = getSegmentState(segment)
                     withContext(Dispatchers.Main.immediate) {
                         _segmentState.update { currentList ->
                             currentList.toMutableList().apply {
@@ -58,5 +46,31 @@ class SegmentRepositoryImpl @Inject constructor(
                 }
             }
         }.awaitAll()
+    }
+
+    override suspend fun getSegment(segment: Segment): StateFlow<SegmentLCEState> {
+        return withContext(ioDispatcher) {
+            val resultState = getSegmentState(segment)
+            MutableStateFlow(resultState)
+        }
+    }
+
+    private suspend fun getSegmentState(segment: Segment): SegmentLCEState {
+        return try {
+            when (segment) {
+                is Segment.CollectionSegment -> {
+                    collectionFetcher.fetchContent(segment)
+                }
+
+                is Segment.BannerSegment -> {
+                    SegmentLCEState.Idle
+                }
+            }
+        } catch (e: Exception) {
+            SegmentLCEState(
+                isLoading = false,
+                error = e.message
+            )
+        }
     }
 }

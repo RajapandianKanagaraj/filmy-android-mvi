@@ -1,13 +1,12 @@
-package com.android.filmy.moviedetails
+package com.android.filmy.features.moviedetails
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.android.filmy.analytics.InitRumView
-import com.android.filmy.home.RenderState
+import com.android.filmy.features.home.RenderState
 import com.android.filmy.ui.TrackableContent
 
 @Composable

@@ -1,4 +1,4 @@
-package com.android.filmy.home
+package com.android.filmy.features.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -127,68 +127,68 @@ private fun TrackableHomeScreen(
 }
 
 // Solution #2 - Using Compose Wrapper
-@Composable
-private fun CustomModifierHomeScreen(
-    modifier: Modifier = Modifier,
-    state: List<SegmentLCEState>,
-    trackingParams: TrackingParam,
-    onTabSelected: (TopNavTab) -> Unit = {},
-) {
-    val topNavTabs = remember { TopNavTabs.allTabs }
-
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
-    var selectedTab by remember { mutableStateOf(topNavTabs[selectedTabIndex]) }
-
-    val localTrackingContext = LocalTrackingContext.current
-
-    val trackingSubject = remember {
-        TrackingSubject(
-            id = trackingParams.id,
-            name = trackingParams.name,
-            role = trackingParams.role,
-            metadata = trackingParams.metadata,
-            parentId = localTrackingContext?.id.orEmpty(),
-            parentName = localTrackingContext?.name.orEmpty(),
-            ancestorChain = localTrackingContext?.ancestorChain.orEmpty() + ":" + trackingParams.id
-        )
-    }
-
-    val newTrackingContext = remember(trackingSubject.id, trackingSubject.name) {
-        TrackingContext(
-            id = trackingSubject.id,
-            name = trackingSubject.name,
-            ancestorChain = trackingSubject.ancestorChain,
-        )
-    }
-
-    CompositionLocalProvider(LocalTrackingContext provides newTrackingContext) {
-        Column(
-            modifier = modifier
-                .dispatchOnAppear(trackingSubject = trackingSubject),
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                topNavTabs.forEachIndexed { index, tab ->
-                    ContentTab(topNavTab = tab, selectedTab = selectedTab) {
-                        selectedTabIndex = index
-                        selectedTab = tab
-                        onTabSelected
-                    }
-                }
-            }
-
-            TabContent(
-                tab = selectedTab,
-                state = state,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-    }
-}
+//@Composable
+//private fun CustomModifierHomeScreen(
+//    modifier: Modifier = Modifier,
+//    state: List<SegmentLCEState>,
+//    trackingParams: TrackingParam,
+//    onTabSelected: (TopNavTab) -> Unit = {},
+//) {
+//    val topNavTabs = remember { TopNavTabs.allTabs }
+//
+//    var selectedTabIndex by remember { mutableIntStateOf(0) }
+//    var selectedTab by remember { mutableStateOf(topNavTabs[selectedTabIndex]) }
+//
+//    val localTrackingContext = LocalTrackingContext.current
+//
+//    val trackingSubject = remember {
+//        TrackingSubject(
+//            id = trackingParams.id,
+//            name = trackingParams.name,
+//            role = trackingParams.role,
+//            metadata = trackingParams.metadata,
+//            parentId = localTrackingContext?.id.orEmpty(),
+//            parentName = localTrackingContext?.name.orEmpty(),
+//            ancestorChain = localTrackingContext?.ancestorChain.orEmpty() + ":" + trackingParams.id
+//        )
+//    }
+//
+//    val newTrackingContext = remember(trackingSubject.id, trackingSubject.name) {
+//        TrackingContext(
+//            id = trackingSubject.id,
+//            name = trackingSubject.name,
+//            ancestorChain = trackingSubject.ancestorChain,
+//        )
+//    }
+//
+//    CompositionLocalProvider(LocalTrackingContext provides newTrackingContext) {
+//        Column(
+//            modifier = modifier
+//                .dispatchOnAppear(trackingSubject = trackingSubject),
+//        ) {
+//            Row(
+//                modifier = Modifier
+//                    .padding(8.dp),
+//                horizontalArrangement = Arrangement.spacedBy(8.dp),
+//                verticalAlignment = Alignment.CenterVertically,
+//            ) {
+//                topNavTabs.forEachIndexed { index, tab ->
+//                    ContentTab(topNavTab = tab, selectedTab = selectedTab) {
+//                        selectedTabIndex = index
+//                        selectedTab = tab
+//                        onTabSelected
+//                    }
+//                }
+//            }
+//
+//            TabContent(
+//                tab = selectedTab,
+//                state = state,
+//                modifier = Modifier.fillMaxSize()
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun ContentTab(

@@ -57,4 +57,12 @@ interface MovieApi {
         @Path("movie_id") movieId: String,
         @Query("language") language: String = "en-US"
     ): PaginatedResponse<MediaContent>
+
+    @GET("discover/movie")
+    suspend fun discoverMovies(
+        @Query("language") language: String = "en-US",
+        @Query("with_watch_providers") watchKey: String,
+        @Query("watch_region") watchRegion: String = "US",
+        @Query("sort_by") sortBy: String,
+    ): PaginatedResponse<MediaContent>
 }

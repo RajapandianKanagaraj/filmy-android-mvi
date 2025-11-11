@@ -1,4 +1,4 @@
-package com.android.filmy.home
+package com.android.filmy.features.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +26,6 @@ class HomeViewModel @Inject constructor(
     val segmentRepository: SegmentRepository,
     val datadogTracker: DatadogTracker,
 ) : ViewModel() {
-
     private val selectedTab = MutableStateFlow(TopNavTabs.allTab)
     val state: StateFlow<List<SegmentLCEState>> = combine(
         segmentRepository.segmentState,
@@ -60,13 +59,6 @@ class HomeViewModel @Inject constructor(
     fun onTabSelected(tab: TopNavTab) {
         selectedTab.value = tab
     }
-
-    fun getTrackingSubject() = TrackingSubject(
-        id = "home_screen:${UUID.randomUUID()}",
-        name = "home_screen",
-        role = "screen",
-        metadata = mapOf("screen_name" to "Home"),
-    )
 
     fun getTrackingParams() = TrackingParam(
         id = "home_screen:${UUID.randomUUID()}",

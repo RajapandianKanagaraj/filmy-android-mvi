@@ -4,27 +4,49 @@ import android.util.Log
 import androidx.navigation.NavController
 import com.android.filmy.analytics.DatadogTracker
 import com.android.filmy.analytics.TrackingEvent
+import com.android.filmy.analytics.tracking.TrackingSubject
 import com.android.filmy.analytics.tracking.toJsonString
 import com.android.filmy.mvi.UiAction.*
 import com.android.filmy.ui.navigation.destinations.ContentDetailsDestination
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface ActionDispatcher {
     fun dispatch(action: Action)
+    val actions: SharedFlow<Action>
+    fun setNavController(navController: NavController)
 }
 
+@Singleton
 class ActionDispatcherImpl @Inject constructor(
     private val datadogTracker: DatadogTracker,
 ): ActionDispatcher {
     private var navController: NavController? = null
-    fun initialize(navController: NavController) {
+
+    private val _actions = MutableSharedFlow<Action>(
+        replay = 1,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+
+    override val actions: SharedFlow<Action> = _actions.asSharedFlow()
+
+    override fun setNavController(navController: NavController) {
         this.navController = navController
     }
 
     override fun dispatch(action: Action) {
+        _actions.tryEmit(action)
         when(action) {
             is NavAction -> handleNavAction(action)
             is UiAction -> handleUiAction(action)
+            is ProviderAction.OnProviderSelected -> {
+//                dispatch(onViewClicked(action.provider.trackingParam))
+            }
         }
     }
 
@@ -53,8 +75,20 @@ class ActionDispatcherImpl @Inject constructor(
                 Log.i("TrackingSubject", "OnDisappeared: $subject")
             }
             is onViewClicked -> {
-                val subject = action.trackingSubject.toJsonString()
-                Log.i("TrackingSubject", "onViewClicked: $subject")
+                val trackingParam = action.trackingModel
+//                val parentContext = action.parentContext
+//                val index = parentContext?.childCount?.getAndIncrement() ?: 0
+                val trackingSubject = TrackingSubject(
+                    id = trackingParam.id,
+                    name = trackingParam.name,
+                    role = trackingParam.role,
+                    metadata = trackingParam.metadata,
+//                    parentId = parentContext?.id,
+//                    parentName = parentContext?.name,
+//                    indexWithInParent = index,
+//                    ancestorChain = parentContext?.ancestorChain + ":" + trackingParam.id + "[$index]"
+                )
+                Log.i("TrackingSubject", "onViewClicked: ${trackingSubject.toJsonString()}")
             }
         }
     }
@@ -64,4 +98,9 @@ class NoOpActionDispatcher: ActionDispatcher {
     override fun dispatch(action: Action) {
        // No-op
     }
+
+    override val actions: SharedFlow<Action>
+        get() = MutableSharedFlow()
+
+    override fun setNavController(navController: NavController) = Unit
 }

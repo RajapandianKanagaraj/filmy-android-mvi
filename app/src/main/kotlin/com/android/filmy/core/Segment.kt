@@ -24,6 +24,7 @@ sealed interface Feed {
         object UpcomingFeed : MovieFeed
         object PopularFeed : MovieFeed
         data class TrendingFeed(val timeWindow: String) : MovieFeed
+        data class DiscoverFeed(val watchProviderId: String, val watchProviderName: String, val sortBy: String) : MovieFeed
         object TopRatedFeed : MovieFeed
         data class RecommendationFeed(val movieId: String) : MovieFeed
         data class SimilarFeed(val movieId: String) : MovieFeed
@@ -33,6 +34,7 @@ sealed interface Feed {
         object AiringTodayFeed : TvFeed
         object PopularFeed : TvFeed
         data class TrendingFeed(val timeWindow: String) : TvFeed
+        data class DiscoverFeed(val watchProviderId: String, val watchProviderName: String, val sortBy: String) : TvFeed
         object TopRatedFeed : TvFeed
         object OnTheAirFeed : TvFeed
     }
@@ -45,5 +47,6 @@ sealed interface Feed {
     sealed interface ProviderFeed: Feed {
         object MovieProvidersFeed : ProviderFeed
         object TvShowProvidersFeed : ProviderFeed
+        object AllProvidersFeed : ProviderFeed
     }
 }

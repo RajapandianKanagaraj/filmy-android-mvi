@@ -78,58 +78,58 @@ private fun <T : SegmentDataModel> TrackableCarousel(
 }
 
 // Solution #2 - Using Custom Modifier to dispatch the Tracking Events
-@Composable
-private fun <T : SegmentDataModel> CustomModifierCarousel(
-    dataModel: CollectionDataModel,
-    items: List<T>,
-    modifier: Modifier = Modifier,
-) {
-    val localTrackingContext = LocalTrackingContext.current
-
-    val trackingParam = remember {
-        dataModel.trackingParam
-    }
-    val trackingSubject = remember {
-        TrackingSubject(
-            id = trackingParam.id,
-            name = trackingParam.name,
-            role = trackingParam.role,
-            metadata = trackingParam.metadata,
-            parentId = localTrackingContext?.id.orEmpty(),
-            parentName = localTrackingContext?.name.orEmpty(),
-            ancestorChain = localTrackingContext?.ancestorChain.orEmpty() + ":" + trackingParam.id,
-        )
-    }
-
-    val newTrackingContext = remember(trackingSubject.id, trackingSubject.name) {
-        TrackingContext(
-            id = trackingSubject.id,
-            name = trackingSubject.name,
-            ancestorChain = trackingSubject.ancestorChain,
-        )
-    }
-
-    CompositionLocalProvider(LocalTrackingContext provides newTrackingContext) {
-        Column(
-            modifier = modifier
-                .dispatchOnAppear(trackingSubject = trackingSubject)
-        ) {
-            Text(
-                text = dataModel.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(12.dp)
-            )
-
-            LazyRow(modifier = Modifier) {
-                items(items, key = { it.id }) { item ->
-                    CollectionItemResolver(item = item)
-                }
-            }
-        }
-    }
-}
+//@Composable
+//private fun <T : SegmentDataModel> CustomModifierCarousel(
+//    dataModel: CollectionDataModel,
+//    items: List<T>,
+//    modifier: Modifier = Modifier,
+//) {
+//    val localTrackingContext = LocalTrackingContext.current
+//
+//    val trackingParam = remember {
+//        dataModel.trackingParam
+//    }
+//    val trackingSubject = remember {
+//        TrackingSubject(
+//            id = trackingParam.id,
+//            name = trackingParam.name,
+//            role = trackingParam.role,
+//            metadata = trackingParam.metadata,
+//            parentId = localTrackingContext?.id.orEmpty(),
+//            parentName = localTrackingContext?.name.orEmpty(),
+//            ancestorChain = localTrackingContext?.ancestorChain.orEmpty() + ":" + trackingParam.id,
+//        )
+//    }
+//
+//    val newTrackingContext = remember(trackingSubject.id, trackingSubject.name) {
+//        TrackingContext(
+//            id = trackingSubject.id,
+//            name = trackingSubject.name,
+//            ancestorChain = trackingSubject.ancestorChain,
+//        )
+//    }
+//
+//    CompositionLocalProvider(LocalTrackingContext provides newTrackingContext) {
+//        Column(
+//            modifier = modifier
+//                .dispatchOnAppear(trackingSubject = trackingSubject)
+//        ) {
+//            Text(
+//                text = dataModel.title,
+//                maxLines = 1,
+//                overflow = TextOverflow.Ellipsis,
+//                style = MaterialTheme.typography.titleMedium,
+//                modifier = Modifier.padding(12.dp)
+//            )
+//
+//            LazyRow(modifier = Modifier) {
+//                items(items, key = { it.id }) { item ->
+//                    CollectionItemResolver(item = item)
+//                }
+//            }
+//        }
+//    }
+//}
 
 @Composable
 private fun <T : SegmentDataModel> CollectionItemResolver(item: T) {
@@ -148,9 +148,7 @@ private fun <T : SegmentDataModel> CollectionItemResolver(item: T) {
                 modifier = Modifier
                     .padding(8.dp)
                     .wrapContentSize(),
-                id = item.id,
-                title = item.name,
-                posterUrl = item.profileUrl,
+                dataModel = item,
                 onClick = { }
             )
         }
@@ -160,8 +158,7 @@ private fun <T : SegmentDataModel> CollectionItemResolver(item: T) {
                 modifier = Modifier
                     .padding(8.dp)
                     .wrapContentSize(),
-                posterUrl = item.logoUrl,
-                provideName = item.providerName,
+                dataModel = item,
             )
         }
     }

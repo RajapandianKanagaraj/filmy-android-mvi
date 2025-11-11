@@ -14,34 +14,38 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.android.filmy.model.PersonDataModel
+import com.android.filmy.ui.TrackableContent
 
 @Composable
 fun PersonCard(
     modifier: Modifier = Modifier,
-    id: String,
-    title: String,
-    posterUrl: String,
+    dataModel: PersonDataModel,
     onClick: () -> Unit,
 ) {
-    Card(
-        onClick = onClick,
-        modifier = modifier
-            .width(160.dp)
-            .aspectRatio(2f / 3f)
-            .semantics {
-                contentDescription = title
-                role = Role.Button
-            },
+    TrackableContent(
+        trackingParam = dataModel.trackingParam,
     ) {
-        Column {
-            AsyncImage(
-                model = posterUrl,
-                contentDescription = title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            )
+        Card(
+            onClick = onClick,
+            modifier = modifier
+                .width(160.dp)
+                .aspectRatio(2f / 3f)
+                .semantics {
+                    contentDescription = dataModel.name
+                    role = Role.Button
+                },
+        ) {
+            Column {
+                AsyncImage(
+                    model = dataModel.profileUrl,
+                    contentDescription = dataModel.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+            }
         }
     }
 }
