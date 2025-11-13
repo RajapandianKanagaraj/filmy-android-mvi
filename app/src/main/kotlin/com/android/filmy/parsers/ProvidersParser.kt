@@ -1,6 +1,6 @@
 package com.android.filmy.parsers
 
-import com.android.filmy.analytics.tracking.TrackingParam
+import com.filmy.tracking.TrackingParam
 import com.android.filmy.model.ContentType
 import com.android.filmy.model.ProviderDataModel
 import com.android.filmy.model.SegmentDataModel

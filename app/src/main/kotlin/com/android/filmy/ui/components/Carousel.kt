@@ -8,21 +8,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.android.filmy.analytics.tracking.LocalTrackingContext
-import com.android.filmy.analytics.tracking.TrackingContext
-import com.android.filmy.analytics.tracking.TrackingSubject
 import com.android.filmy.model.CollectionDataModel
 import com.android.filmy.model.MovieDataModel
 import com.android.filmy.model.PersonDataModel
 import com.android.filmy.model.ProviderDataModel
 import com.android.filmy.model.SegmentDataModel
 import com.android.filmy.ui.TrackableContent
-import com.android.filmy.ui.dispatchOnAppear
 
 @Composable
 fun <T : SegmentDataModel> Carousel(

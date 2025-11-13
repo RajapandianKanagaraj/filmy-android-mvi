@@ -1,4 +1,4 @@
-package com.android.filmy.analytics.tracking
+package com.filmy.tracking
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

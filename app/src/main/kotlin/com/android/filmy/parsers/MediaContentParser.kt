@@ -1,10 +1,10 @@
 package com.android.filmy.parsers
 
-import com.android.filmy.analytics.tracking.TrackingParam
 import com.android.filmy.model.ContentType
 import com.android.filmy.model.MovieDataModel
 import com.android.filmy.model.SegmentDataModel
 import com.android.filmy.model.response.MediaContent
+import com.filmy.tracking.TrackingParam
 import javax.inject.Inject
 
 class MediaContentParser @Inject constructor(): ContentParser<MediaContent> {

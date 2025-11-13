@@ -3,14 +3,13 @@ package com.android.filmy.features.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.filmy.analytics.DatadogTracker
-import com.android.filmy.analytics.tracking.TrackingParam
-import com.android.filmy.analytics.tracking.TrackingSubject
 import com.android.filmy.core.Segment
 import com.android.filmy.core.SegmentLCEState
 import com.android.filmy.core.SegmentRepository
 import com.android.filmy.model.ContentType
 import com.android.filmy.ui.TopNavTab
 import com.android.filmy.ui.TopNavTabs
+import com.filmy.tracking.TrackingParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

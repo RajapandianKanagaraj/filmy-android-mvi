@@ -2,7 +2,7 @@ package com.android.filmy.features.providers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.filmy.analytics.tracking.TrackingParam
+import com.filmy.tracking.TrackingParam
 import com.android.filmy.core.SegmentLCEState
 import com.android.filmy.core.SegmentRepository
 import com.android.filmy.model.CollectionDataModel

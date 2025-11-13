@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.android.filmy.analytics.tracking.TrackingParam
 import com.android.filmy.core.SegmentLCEState
 import com.android.filmy.core.SegmentRepository
 import com.android.filmy.ui.navigation.destinations.ContentDetailsDestination
+import com.filmy.tracking.TrackingParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

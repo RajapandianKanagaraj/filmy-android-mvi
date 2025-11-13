@@ -81,6 +81,11 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.material.icons.extended)
 
+    //Core Tracking
+    implementation(project(":tracking"))
+    implementation(project(":tracking-annotation"))
+    ksp(project(":tracking-processor"))
+
     // Dagger - Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

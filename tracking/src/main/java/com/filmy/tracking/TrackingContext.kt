@@ -1,4 +1,4 @@
-package com.android.filmy.analytics.tracking
+package com.filmy.tracking
 
 import java.util.concurrent.atomic.AtomicInteger
 

@@ -1,4 +1,4 @@
-package com.android.filmy.analytics.tracking
+package com.filmy.tracking
 
 import androidx.compose.runtime.staticCompositionLocalOf
 val LocalTrackingContext = staticCompositionLocalOf<TrackingContext?> {

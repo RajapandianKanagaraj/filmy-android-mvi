@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -16,15 +15,12 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.android.filmy.analytics.tracking.LocalTrackingContext
-import com.android.filmy.analytics.tracking.TrackingContext
-import com.android.filmy.analytics.tracking.TrackingSubject
+import com.filmy.tracking.LocalTrackingContext
 import com.android.filmy.model.MovieDataModel
 import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.mvi.NavAction
 import com.android.filmy.mvi.UiAction
 import com.android.filmy.ui.TrackableContent
-import com.android.filmy.ui.dispatchOnAppear
 
 @Composable
 fun MovieCard(

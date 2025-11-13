@@ -1,12 +1,12 @@
 package com.android.filmy.core
 
-import com.android.filmy.analytics.tracking.TrackingParam
 import com.android.filmy.model.CollectionDataModel
 import com.android.filmy.model.ContentType
 import com.android.filmy.model.ProviderDataModel
 import com.android.filmy.model.response.FeedItemResponse
 import com.android.filmy.model.response.PaginatedResponse
 import com.android.filmy.parsers.ContentParser
+import com.filmy.tracking.TrackingParam
 import java.util.UUID
 import javax.inject.Inject
 

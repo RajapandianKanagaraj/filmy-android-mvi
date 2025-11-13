@@ -1,6 +1,7 @@
 package com.android.filmy.model
 
-import com.android.filmy.analytics.tracking.TrackingParam
+import com.filmy.tracking.TrackingParam
+
 
 interface Trackable {
     val trackingParam: TrackingParam

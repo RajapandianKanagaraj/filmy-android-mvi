@@ -10,13 +10,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.android.filmy.analytics.tracking.LocalTrackingContext
-import com.android.filmy.analytics.tracking.TrackingContext
 import com.android.filmy.mvi.ActionDispatcher
 import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.ui.AppScaffold
 import com.android.filmy.ui.theme.FilmyAndroidMVITheme
 import com.datadog.android.rum.GlobalRumMonitor
+import com.filmy.tracking.LocalTrackingContext
+import com.filmy.tracking.TrackingContext
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
 import javax.inject.Inject
@@ -51,16 +51,14 @@ class MainActivity : ComponentActivity() {
                 val showBackArrow = remember(currentRoute) {
                     isNotTabRoot(currentRoute)
                 }
-
-                val id = "main_activity:${UUID.randomUUID()}"
-                val name = "main_activity"
-
-                val trackingContext = TrackingContext(
-                    id = id,
-                    name = name,
-                    ancestorChain = id, // To get just immediate parent in the Ancestry Chain
-//            ancestorChain = trackingSubject.ancestorChain, // To get full ancestry chain
-                )
+                val trackingContext = remember {
+                    val id = "main_activity:${UUID.randomUUID()}"
+                    TrackingContext(
+                        id = id,
+                        name = "main_activity",
+                        ancestorChain = id
+                    )
+                }
 
                 CompositionLocalProvider(
                     LocalActionDispatcher provides actionDispatcher,

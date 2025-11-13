@@ -1,10 +1,10 @@
 package com.android.filmy.mvi
 
-import com.android.filmy.analytics.tracking.TrackingContext
-import com.android.filmy.analytics.tracking.TrackingParam
-import com.android.filmy.analytics.tracking.TrackingSubject
 import com.android.filmy.model.ContentType
 import com.android.filmy.model.ProviderDataModel
+import com.filmy.tracking.TrackingContext
+import com.filmy.tracking.TrackingParam
+import com.filmy.tracking.TrackingSubject
 
 sealed interface Action
 

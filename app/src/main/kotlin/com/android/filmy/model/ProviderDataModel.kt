@@ -1,6 +1,6 @@
 package com.android.filmy.model
 
-import com.android.filmy.analytics.tracking.TrackingParam
+import com.filmy.tracking.TrackingParam
 
 data class ProviderDataModel(
     override val id: String,

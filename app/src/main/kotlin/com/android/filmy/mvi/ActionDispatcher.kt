@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.navigation.NavController
 import com.android.filmy.analytics.DatadogTracker
 import com.android.filmy.analytics.TrackingEvent
-import com.android.filmy.analytics.tracking.TrackingSubject
-import com.android.filmy.analytics.tracking.toJsonString
 import com.android.filmy.mvi.UiAction.*
 import com.android.filmy.ui.navigation.destinations.ContentDetailsDestination
+import com.filmy.tracking.TrackingSubject
+import com.filmy.tracking.toJsonString
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

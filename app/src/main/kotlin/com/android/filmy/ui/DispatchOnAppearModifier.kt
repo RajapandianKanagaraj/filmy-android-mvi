@@ -1,13 +1,9 @@
 package com.android.filmy.ui
 
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import com.android.filmy.analytics.tracking.LocalTrackingContext
-import com.android.filmy.analytics.tracking.TrackingParam
-import com.android.filmy.analytics.tracking.TrackingSubject
+import com.filmy.tracking.TrackingSubject
 import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.mvi.UiAction
 

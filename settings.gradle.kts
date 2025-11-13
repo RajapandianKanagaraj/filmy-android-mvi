@@ -15,4 +15,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Filmy-Android-MVI"
 include(":app")
- 
+include(":core-tracking")
+include(":tracking-processor")
+include(":tracking-annotation")
+include(":tracking")

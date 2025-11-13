@@ -1,7 +1,7 @@
 package com.android.filmy.model
 
 import com.android.filmy.BuildConfig
-import com.android.filmy.analytics.tracking.TrackingParam
+import com.filmy.tracking.TrackingParam
 
 data class MovieDataModel(
     override val id: String,

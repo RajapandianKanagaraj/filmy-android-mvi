@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import com.android.filmy.analytics.tracking.LocalTrackingContext
-import com.android.filmy.analytics.tracking.TrackingContext
-import com.android.filmy.analytics.tracking.TrackingParam
-import com.android.filmy.analytics.tracking.TrackingSubject
+import com.filmy.tracking.LocalTrackingContext
+import com.filmy.tracking.TrackingContext
+import com.filmy.tracking.TrackingParam
+import com.filmy.tracking.TrackingSubject
 import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.mvi.UiAction
 
