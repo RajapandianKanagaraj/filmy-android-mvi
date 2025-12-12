@@ -1,20 +1,30 @@
 package com.android.filmy.ui
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import com.filmy.tracking.LocalTrackingContext
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onFirstVisible
+import androidx.compose.ui.layout.onVisibilityChanged
+import com.android.filmy.analytics.LocalTrackingContext
+import com.android.filmy.mvi.AnalyticsAction
 import com.filmy.tracking.TrackingContext
 import com.filmy.tracking.TrackingParam
 import com.filmy.tracking.TrackingSubject
 import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.mvi.UiAction
+import com.filmy.tracking.AnalyticsEvent
+import com.filmy.tracking.Environment
+import com.filmy.tracking.EventType
+import com.filmy.tracking.SubjectDescription
 
 @Composable
 fun TrackableContent(
     trackingParam: TrackingParam,
-    content: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    content: @Composable (modifier: Modifier) -> Unit
 ) {
     val actionDispatcher = LocalActionDispatcher.current
     val parentTrackingContext = LocalTrackingContext.current
@@ -36,6 +46,19 @@ fun TrackableContent(
         )
     }
 
+    val subjectDescription = remember(trackingParam.id, trackingParam.name) {
+        SubjectDescription(
+            id = trackingParam.id,
+            name = trackingParam.name,
+            role = trackingParam.role,
+            metadata = trackingParam.metadata,
+            parentId = parentTrackingContext?.id.orEmpty(),
+            parentName = parentTrackingContext?.name.orEmpty(),
+            indexWithInParent = index,
+            ancestorChain = parentTrackingContext?.ancestorChain.orEmpty() + ":" + trackingParam.id + "[$index]",
+        )
+    }
+
     val newTrackingContext = remember(trackingSubject.id, trackingSubject.name) {
         TrackingContext(
             id = trackingSubject.id,
@@ -45,23 +68,93 @@ fun TrackableContent(
         )
     }
     CompositionLocalProvider(LocalTrackingContext provides newTrackingContext) {
-        DisposableEffect(trackingSubject.id) {
-            // Dispatch the appear event
-            actionDispatcher.dispatch(
-                UiAction.OnAppeared(
-                    trackingSubject
-                )
-            )
+//        DisposableEffect(trackingSubject.id) {
+//            actionDispatcher.dispatch(
+//                action = AnalyticsAction.OnVisible(
+//                    event = AnalyticsEvent(
+//                        eventType = EventType.ON_VISIBLE,
+//                        subjectDescription = subjectDescription,
+//                        environment = Environment(
+//                            customerGuid = "",
+//                            deviceGuid = "",
+//                            os = "Android",
+//                            device = "Pixel 10",
+//                        )
+//                    )
+//                )
+//            )
+//
+//            onDispose {
+//                actionDispatcher.dispatch(
+//                    action = AnalyticsAction.OnInVisible(
+//                        event = AnalyticsEvent(
+//                            eventType = EventType.ON_INVISIBLE,
+//                            subjectDescription = subjectDescription,
+//                            environment = Environment(
+//                                customerGuid = "",
+//                                deviceGuid = "",
+//                                os = "Android",
+//                                device = "Pixel 10",
+//                            )
+//                        )
+//                    )
+//                )
+//            }
+//        }
 
-            // Dispatch disappear event when composable leaves composition
-            onDispose {
+        val visibilityModifier = modifier
+            .onFirstVisible {
                 actionDispatcher.dispatch(
-                    UiAction.OnDisappeared(
-                        trackingSubject
+                    action = AnalyticsAction.InViewPort(
+                        event = AnalyticsEvent(
+                            eventType = EventType.IN_VIEW_PORT,
+                            subjectDescription = subjectDescription,
+                            environment = Environment(
+                                customerGuid = "",
+                                deviceGuid = "",
+                                os = "Android",
+                                device = "Pixel 10",
+                            )
+                        )
                     )
                 )
             }
-        }
-        content()
+            .onVisibilityChanged(
+                minFractionVisible = 0.5f,
+                minDurationMs = 500,
+            ) { visible ->
+                if (visible) {
+                    actionDispatcher.dispatch(
+                        action = AnalyticsAction.OnVisible(
+                            event = AnalyticsEvent(
+                                eventType = EventType.ON_VISIBLE,
+                                subjectDescription = subjectDescription,
+                                environment = Environment(
+                                    customerGuid = "",
+                                    deviceGuid = "",
+                                    os = "Android",
+                                    device = "Pixel 10",
+                                )
+                            )
+                        )
+                    )
+                } else {
+                    actionDispatcher.dispatch(
+                        action = AnalyticsAction.OnInVisible(
+                            event = AnalyticsEvent(
+                                eventType = EventType.ON_INVISIBLE,
+                                subjectDescription = subjectDescription,
+                                environment = Environment(
+                                    customerGuid = "",
+                                    deviceGuid = "",
+                                    os = "Android",
+                                    device = "Pixel 10",
+                                )
+                            )
+                        )
+                    )
+                }
+            }
+        content(visibilityModifier)
     }
 }

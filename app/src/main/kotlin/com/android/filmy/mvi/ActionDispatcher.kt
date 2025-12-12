@@ -5,6 +5,8 @@ import androidx.navigation.NavController
 import com.android.filmy.analytics.DatadogTracker
 import com.android.filmy.analytics.TrackingEvent
 import com.android.filmy.mvi.UiAction.*
+import com.android.filmy.tracking.core.AnalyticsManager
+import com.android.filmy.tracking.core.AnalyticsManagerImpl
 import com.android.filmy.ui.navigation.destinations.ContentDetailsDestination
 import com.filmy.tracking.TrackingSubject
 import com.filmy.tracking.toJsonString
@@ -19,11 +21,13 @@ interface ActionDispatcher {
     fun dispatch(action: Action)
     val actions: SharedFlow<Action>
     fun setNavController(navController: NavController)
+    fun clearNavController()
 }
 
 @Singleton
 class ActionDispatcherImpl @Inject constructor(
     private val datadogTracker: DatadogTracker,
+    private val analyticsManager: AnalyticsManagerImpl,
 ): ActionDispatcher {
     private var navController: NavController? = null
 
@@ -39,6 +43,10 @@ class ActionDispatcherImpl @Inject constructor(
         this.navController = navController
     }
 
+    override fun clearNavController() {
+        navController = null
+    }
+
     override fun dispatch(action: Action) {
         _actions.tryEmit(action)
         when(action) {
@@ -46,6 +54,29 @@ class ActionDispatcherImpl @Inject constructor(
             is UiAction -> handleUiAction(action)
             is ProviderAction.OnProviderSelected -> {
 //                dispatch(onViewClicked(action.provider.trackingParam))
+            }
+            is AnalyticsAction -> {
+                handleAnalyticsAction(action)
+            }
+        }
+    }
+
+    private fun handleAnalyticsAction(action: AnalyticsAction) {
+        when(action) {
+            is AnalyticsAction.InViewPort -> {
+                analyticsManager.queueEvent(action.event)
+            }
+            is  AnalyticsAction.OnVisible -> {
+                analyticsManager.queueEvent(action.event)
+            }
+            is AnalyticsAction.OnInVisible -> {
+                analyticsManager.queueEvent(action.event)
+            }
+            is AnalyticsAction.OnClicked -> {
+                analyticsManager.queueEvent(action.event)
+            }
+            is AnalyticsAction.OnNavigate -> {
+                analyticsManager.queueEvent(action.event)
             }
         }
     }
@@ -76,17 +107,17 @@ class ActionDispatcherImpl @Inject constructor(
             }
             is onViewClicked -> {
                 val trackingParam = action.trackingModel
-//                val parentContext = action.parentContext
+                val parentContext = action.parentContext
 //                val index = parentContext?.childCount?.getAndIncrement() ?: 0
                 val trackingSubject = TrackingSubject(
                     id = trackingParam.id,
                     name = trackingParam.name,
                     role = trackingParam.role,
                     metadata = trackingParam.metadata,
-//                    parentId = parentContext?.id,
-//                    parentName = parentContext?.name,
+                    parentId = parentContext?.id,
+                    parentName = parentContext?.name,
 //                    indexWithInParent = index,
-//                    ancestorChain = parentContext?.ancestorChain + ":" + trackingParam.id + "[$index]"
+                    ancestorChain = parentContext?.ancestorChain + ":" + trackingParam.id //+ "[$index]"
                 )
                 Log.i("TrackingSubject", "onViewClicked: ${trackingSubject.toJsonString()}")
             }
@@ -103,4 +134,5 @@ class NoOpActionDispatcher: ActionDispatcher {
         get() = MutableSharedFlow()
 
     override fun setNavController(navController: NavController) = Unit
+    override fun clearNavController() = Unit
 }

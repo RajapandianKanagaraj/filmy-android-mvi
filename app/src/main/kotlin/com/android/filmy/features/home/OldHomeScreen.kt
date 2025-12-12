@@ -93,6 +93,7 @@ private fun TrackableHomeScreen(
 
     TrackableContent(
         trackingParam = trackingParams,
+        modifier = modifier,
     ) {
         Column(
             modifier = modifier

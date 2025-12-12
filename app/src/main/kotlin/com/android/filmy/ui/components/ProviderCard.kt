@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
-import com.filmy.tracking.LocalTrackingContext
+import com.android.filmy.analytics.LocalTrackingContext
 import com.android.filmy.model.ProviderDataModel
 import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.mvi.ProviderAction

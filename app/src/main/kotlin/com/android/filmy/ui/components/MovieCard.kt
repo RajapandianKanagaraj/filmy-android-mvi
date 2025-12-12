@@ -15,7 +15,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.filmy.tracking.LocalTrackingContext
+import com.android.filmy.analytics.LocalTrackingContext
 import com.android.filmy.model.MovieDataModel
 import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.mvi.NavAction

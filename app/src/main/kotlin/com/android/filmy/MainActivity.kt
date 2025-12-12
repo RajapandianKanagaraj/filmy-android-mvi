@@ -15,7 +15,7 @@ import com.android.filmy.mvi.LocalActionDispatcher
 import com.android.filmy.ui.AppScaffold
 import com.android.filmy.ui.theme.FilmyAndroidMVITheme
 import com.datadog.android.rum.GlobalRumMonitor
-import com.filmy.tracking.LocalTrackingContext
+import com.android.filmy.analytics.LocalTrackingContext
 import com.filmy.tracking.TrackingContext
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         GlobalRumMonitor.get().stopView(this)
+        actionDispatcher.clearNavController()
     }
 }
 

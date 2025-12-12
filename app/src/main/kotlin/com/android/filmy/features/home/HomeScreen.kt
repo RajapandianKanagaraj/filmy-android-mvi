@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.filmy.ui.TopNavTabs
-import com.filmy.core.tracking.annotations.Trackable
+import com.filmy.tracking.annotation.Trackable
 
 @Trackable(
     id = "home_screen",

@@ -2,6 +2,7 @@ package com.android.filmy.mvi
 
 import com.android.filmy.model.ContentType
 import com.android.filmy.model.ProviderDataModel
+import com.filmy.tracking.AnalyticsEvent
 import com.filmy.tracking.TrackingContext
 import com.filmy.tracking.TrackingParam
 import com.filmy.tracking.TrackingSubject
@@ -24,6 +25,14 @@ sealed interface UiAction: Action {
     data class OnAppeared(val trackingSubject: TrackingSubject): UiAction
     data class OnDisappeared(val trackingSubject: TrackingSubject): UiAction
     data class onViewClicked(val trackingModel: TrackingParam, val parentContext: TrackingContext?): UiAction
+}
+
+sealed interface AnalyticsAction: Action {
+    data class InViewPort(val event: AnalyticsEvent): AnalyticsAction
+    data class OnVisible(val event: AnalyticsEvent): AnalyticsAction
+    data class OnInVisible(val event: AnalyticsEvent): AnalyticsAction
+    data class OnClicked(val event: AnalyticsEvent): AnalyticsAction
+    data class OnNavigate(val event: AnalyticsEvent): AnalyticsAction
 }
 
 sealed interface ProviderAction: Action {

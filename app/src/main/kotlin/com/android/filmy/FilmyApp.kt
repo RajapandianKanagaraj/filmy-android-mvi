@@ -1,6 +1,8 @@
 package com.android.filmy
 
 import android.app.Application
+import androidx.lifecycle.ProcessLifecycleOwner
+import com.android.filmy.tracking.core.AnalyticsDispatchApplicationManager
 import com.datadog.android.Datadog
 import com.datadog.android.DatadogSite
 import com.datadog.android.core.configuration.BatchSize
@@ -10,11 +12,15 @@ import com.datadog.android.privacy.TrackingConsent
 import com.datadog.android.rum.Rum
 import com.datadog.android.rum.RumConfiguration
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
 class FilmyApp : Application() {
+    @Inject lateinit var analyticsDispatchApplicationManager: AnalyticsDispatchApplicationManager
+
     override fun onCreate() {
         super.onCreate()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(analyticsDispatchApplicationManager)
         initDatadog()
     }
 
